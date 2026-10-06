@@ -26,7 +26,7 @@ async (page) => {
   check(await page.locator('#tab-rolling').getAttribute('aria-selected') === 'true', 'Keyboard tab navigation');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator('.menu-toggle').click();
-  await page.locator('#navigation a').first().focus();
+  check(await page.locator('#navigation a').first().evaluate(el => el === document.activeElement), 'Menu initial focus');
   await page.keyboard.press('Escape');
   check(await page.locator('.menu-toggle').evaluate(el => el === document.activeElement), 'Mobile menu focus');
   await page.locator('#inquiry-name').fill('Regression Test');
@@ -35,5 +35,13 @@ async (page) => {
   await page.locator('#inquiry-form button[type="submit"]').click();
   check((await page.locator('#draft-preview').inputValue()).includes('Local draft test'), 'Draft content');
   check(!page.url().includes('email='), 'Private data in URL');
+  await page.locator('#inquiry-email').fill('updated@example.com');
+  check(await page.locator('#copy-draft').isDisabled(), 'Stale copy disabled');
+  check(await page.locator('#draft-preview').inputValue() === '', 'Stale draft erased');
+  await page.locator('#inquiry-form button[type="submit"]').click();
+  check((await page.locator('#draft-preview').inputValue()).includes('updated@example.com'), 'Draft rebuilt');
+  await page.locator('#clear-inquiry').click();
+  check(await page.locator('#inquiry-name').inputValue() === '', 'Clear name');
+  check(!(await page.locator('#draft-actions').isVisible()), 'Clear draft actions');
   console.log('PASS: widths, five material paths, filter, keyboard tabs, modal, mobile focus and local draft.');
 }
