@@ -9,6 +9,10 @@ async (page) => {
  for(const product of ['diecast','a356','slab','liquid','zinc']){
   await page.locator(`[data-product="${product}"]`).click();
   check(await page.locator('#dialog-title').evaluate(el=>el===document.activeElement),'Dialog initial heading focus');
+  const title=await page.locator('#dialog-title').innerText();
+  check(await page.locator('#product-dialog').getAttribute('aria-describedby')==='dialog-description','Dialog summary reference');
+  check((await page.locator('#dialog-source').getAttribute('aria-label')).includes(title),'Product source context');
+  check((await page.locator('#dialog-inquiry').getAttribute('aria-label')).includes(title),'Product inquiry context');
   for(let i=0;i<9;i++){await page.keyboard.press('Tab');check(await page.evaluate(()=>!!document.activeElement.closest('#product-dialog')),'Modal tab escape');}
   await page.keyboard.press('Escape');
   check(await page.locator(`[data-product="${product}"]`).evaluate(el=>el===document.activeElement),'Return product focus');
