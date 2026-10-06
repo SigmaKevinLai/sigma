@@ -13,6 +13,13 @@ async (page) => {
     await page.keyboard.press('Escape');
     check(!(await page.locator('dialog').isVisible()), 'Dialog failed to close');
   }
+  await page.locator('#alloy-comparison summary').click();
+  check(await page.locator('#composition-body tr').count() === 8, 'Composition element count');
+  await page.locator('#alloy-left').selectOption('ADC 14');
+  await page.locator('#alloy-right').selectOption('ADC 12');
+  check((await page.locator('#comparison-status').innerText()).includes('6 項'), 'Composition difference count');
+  await page.locator('#alloy-right').selectOption('ADC 14');
+  check(await page.locator('.composition-table .different').count() === 0, 'Identical alloy comparison');
   await page.locator('#tab-casting').click();
   check(await page.locator('.product-card:visible').count() === 3, 'Casting filter count');
   await page.locator('#tab-casting').press('ArrowRight');
