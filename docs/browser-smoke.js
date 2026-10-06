@@ -41,6 +41,7 @@ async (page) => {
   await page.locator('#inquiry-message').fill('Local draft test — do not transmit.');
   await page.locator('#inquiry-form button[type="submit"]').click();
   check((await page.locator('#draft-preview').inputValue()).includes('Local draft test'), 'Draft content');
+  check(await page.locator('#message-count').innerText() === String('Local draft test — do not transmit.'.length), 'Message character count');
   check((await page.locator('#draft-preview').inputValue()).includes('姓名：Regression Test\n'), 'Name trimmed');
   check(!page.url().includes('email='), 'Private data in URL');
   await page.locator('#inquiry-email').fill('updated@example.com');
@@ -51,6 +52,7 @@ async (page) => {
   await page.locator('#clear-inquiry').click();
   check(await page.locator('#inquiry-name').inputValue() === '', 'Clear name');
   check(!(await page.locator('#draft-actions').isVisible()), 'Clear draft actions');
+  check(await page.locator('#message-count').innerText() === '0', 'Clear character count');
   check(!(await page.locator('#inquiry-name').evaluate(el=>el.validity.customError)), 'Clear validation');
   console.log('PASS: widths, five material paths, filter, keyboard tabs, modal, mobile focus and local draft.');
 }
