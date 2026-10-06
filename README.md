@@ -1,49 +1,54 @@
-# SIGMA — Industrial editorial redesign
+# SIGMA 新格集團 — corporate website
 
 [Live GitHub Pages](https://ed100084.github.io/sigma/)
 
-A non-official design concept informed by SIGMA 新格集團's publicly readable company website. Traditional Chinese, graphite/mineral-white/molten-orange industrial editorial style. No framework, server-side data collection, analytics or runtime external fonts.
+Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、鋅合金). Traditional Chinese content, language framework for 简体中文 / English / 日本語. Industrial style: graphite, mineral white, molten orange; isometric technical line art. Static HTML/CSS/JS, no framework, no runtime third-party requests.
 
-## Features
-- Five material families with source-linked native dialogs and application-led discovery.
-- ADC 3/6/10/12/14 composition comparison, 40 source-checked values.
-- Circular manufacturing story, casting field notes and nine production-base selector.
-- Local-only inquiry drafts with clipboard/manual fallback and clear-page controls.
-- Responsive tablet menu, keyboard tabs/focus loops and reduced-motion support.
-- Locally hosted SIL-OFL typography subsets.
+## Structure
+| Path | Page |
+|---|---|
+| `/` | 首頁 |
+| `/about/` | 關於新格（簡介、理念、規模、產業園、沿革） |
+| `/products/` | 產品中心（ADC 系列含成分比較、A356.2、3104/5182/6063/3033、鋁液直供、鋅合金、YSBC3、原料採購） |
+| `/technology/` | 製程與品質 |
+| `/sustainability/` | 永續循環 |
+| `/support/` | 技術支援（37 則可搜尋問答、壓鑄參數表） |
+| `/locations/` | 全球據點（14 個據點，可篩選） |
+| `/contact/` | 聯絡我們（表單產生寄往 info@sigmasha.com 的電子郵件） |
+| `/zh-hans/` `/en/` `/ja/` | 各語言同路由；未翻譯頁為 noindex 佔位頁，連回繁中 |
 
-## Preview
+## Editing content
+All HTML is generated. Do not edit the HTML files by hand.
+
+| File | Holds |
+|---|---|
+| `tools/site_data.py` | Alloy compositions, locations, history |
+| `tools/faq.py` | Technical Q&A and casting tables |
+| `tools/i18n.py` | Languages, routes, UI strings |
+| `tools/build.py` | Page bodies and layout; `VERSION` is the asset cache key (bump on every CSS/JS/font change, also in `assets/site.css` font URL) |
+| `tools/art.py` | Generates `src/art/*.svg` isometric illustrations |
+
+```sh
+python3 tools/art.py          # only when illustrations change
+python3 tools/build.py
+NODE_PATH=/tmp/fontwork/node_modules node tools/font_subset.mjs   # after copy changes; setup in file header
+```
+To translate a language: add body builders for it in `build.py`, register them in `BODIES`, and add the language to `TRANSLATED` so it gets indexed and hreflang links. When the official domain goes live, change `BASE_URL` in `build.py`.
+
+## Preview and checks
 ```sh
 python3 -m http.server 4286 --bind 127.0.0.1
+python3 docs/verify-site.py [--source]    # links, ids, aria refs, wording, 40 ADC values vs source sheet
+python3 docs/run-browser-checks.py        # 4 widths × 8 pages, menu, language switch, comparison, search, filter, form, axe, no-JS
+python3 docs/check-public.py              # after deploy: public bytes == checkout
 ```
-Open http://127.0.0.1:4286/. If port is occupied, use a different port and update performance-check target.
-
-## Validation
-```sh
-python3 docs/verify-site.py
-python3 docs/verify-site.py --source
-node --check app.js
-node --check alloys.js
-```
-Run all eight interaction/focus/navigation/print/clipboard/no-script/display-preference suites with `python3 docs/run-browser-checks.py` (or pass a public site URL). The runner detects CLI-reported errors even when the CLI returns exit code 0 and always closes its browser. Individual tests use the globally installed Playwright CLI:
-```sh
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check open http://127.0.0.1:4286/
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/browser-smoke.js
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/focus-check.js
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/performance-check.js
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/throttled-performance.js
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check eval '()=>window.sigmaThrottled'
-PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check close
-```
-The original performance script measures localhost fresh contexts. The throttled script uses the active site's root with three cold contexts, 150ms latency, 1.6Mbps down / 750Kbps up and 4x CPU slowdown. Results are laboratory samples, not production field Core Web Vitals; compare under identical host/conditions. Automated accessibility checks do not certify complete WCAG compliance.
-
-## Content and fonts
-Company source provenance is documented in [design notes](docs/design-and-sources.md), and iteration reports record checks and limits. Recheck official claims before commercial release. The original website's displayed email differs from its mailto link; do not guess a recipient or turn draft creation into transmission without confirmation.
-
-After adding copy, run `python3 docs/update-font-subset.py`, bump the font URL in fonts.css and matching preload in index.html, then check the page. Fonts are licensed under SIL OFL; retain both license texts in assets/fonts. User-entered/new characters can use system fallback.
+`docs/throttled-performance.js` (via `playwright-cli run-code`) gives lab LCP/CLS under 150 ms latency, 1.6 Mbps, 4× CPU. Lab results are not field Core Web Vitals; axe passing does not certify WCAG conformance.
 
 ## Deploy
-GitHub Pages serves `main` branch repository root with `.nojekyll`. Push to main triggers native Pages build and deployment. Confirm the workflow commit SHA and public assets before saying an update is live. Bump CSS/JS asset query versions whenever content changes to avoid stale browser cache. Never commit private inquiry data. Run `python3 docs/check-public.py` after deployment to compare four public artifacts byte-for-byte; this bounded transport check is not a substitute for rendered browser tests.
+GitHub Pages serves the `main` branch root (`.nojekyll`). Push, confirm the Pages run for the pushed SHA, then run `check-public.py`.
 
-## Scope
-This is a quality-focused redesign, not an official corporate site, validated engineering recommendation, certified accessible product, or guaranteed competition winner. Image/source commercial rights and official contact details need confirmation for a production corporate launch. Original SVG/CSS artwork is conceptual, not a product photograph.
+## Launch checklist (not done yet)
+- Company approval of copy, figures and certification list; real photography if available.
+- Real form backend (current form opens the visitor's email client).
+- Custom domain, `BASE_URL` update, redirects from old `.aspx` URLs (handled at the domain's server/DNS).
+- Translations for 简体中文 / English / 日本語.

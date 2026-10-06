@@ -15,5 +15,5 @@ async (page) => {
    results.push(await p.evaluate(sample=>({sample,lcpMs:Math.round(window.lab.lcp),cls:Number(window.lab.cls.toFixed(4)),transferBytes:performance.getEntriesByType('resource').reduce((n,r)=>n+r.transferSize,0),externalRequests:performance.getEntriesByType('resource').filter(r=>!r.name.startsWith(location.origin)).length}),sample));
   }catch(error){results.push({sample,error:String(error.message||error).split('\n')[0]});}finally{await context.close();}
  }
- await page.evaluate(data=>window.sigmaThrottled=data,results);
+ return JSON.stringify(results);
 }
