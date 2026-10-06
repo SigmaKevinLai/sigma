@@ -43,7 +43,7 @@ Company source provenance is documented in [design notes](docs/design-and-source
 After adding copy, run `python3 docs/update-font-subset.py`, bump the font URL in fonts.css and matching preload in index.html, then check the page. Fonts are licensed under SIL OFL; retain both license texts in assets/fonts. User-entered/new characters can use system fallback.
 
 ## Deploy
-GitHub Pages serves `main` branch repository root with `.nojekyll`. Push to main triggers native Pages build and deployment. Confirm the workflow commit SHA and public assets before saying an update is live. Bump CSS/JS asset query versions whenever content changes to avoid stale browser cache. Never commit private inquiry data.
+GitHub Pages serves `main` branch repository root with `.nojekyll`. Push to main triggers native Pages build and deployment. Confirm the workflow commit SHA and public assets before saying an update is live. Bump CSS/JS asset query versions whenever content changes to avoid stale browser cache. Never commit private inquiry data. Run `python3 docs/check-public.py` after deployment to compare four public artifacts byte-for-byte; this bounded transport check is not a substitute for rendered browser tests.
 
 ## Scope
 This is a quality-focused redesign, not an official corporate site, validated engineering recommendation, certified accessible product, or guaranteed competition winner. Image/source commercial rights and official contact details need confirmation for a production corporate launch. Original SVG/CSS artwork is conceptual, not a product photograph.
