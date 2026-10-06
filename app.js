@@ -42,4 +42,7 @@ document.querySelector('#copy-draft').addEventListener('click',async()=>{const p
 document.querySelector('#clear-inquiry').addEventListener('click',()=>{document.querySelector('#inquiry-form').reset();const preview=document.querySelector('#draft-preview');preview.value='';preview.hidden=true;document.querySelector('#draft-actions').hidden=true;document.querySelector('#form-status').textContent='已清除本頁欄位與草稿。先前複製到系統剪貼簿的內容不會自動清除。';document.querySelector('#inquiry-name').focus({preventScroll:true});});
 document.querySelector('#year').textContent=new Date().getFullYear();
 const sections=document.querySelectorAll('main section[id]');
-if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)nav.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.hash==='#'+entry.target.id));});},{rootMargin:'-15% 0px -55% 0px'});sections.forEach(s=>observer.observe(s));}
+let navigationFrame=0;
+function updateReadingPosition(){navigationFrame=0;const line=document.querySelector('.header').getBoundingClientRect().height+40;let current;sections.forEach(section=>{if(section.getBoundingClientRect().top<=line)current=section;});nav.querySelectorAll('a').forEach(link=>{const active=!!current&&link.hash==='#'+current.id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
+function scheduleReadingPosition(){if(!navigationFrame)navigationFrame=requestAnimationFrame(updateReadingPosition);}
+window.addEventListener('scroll',scheduleReadingPosition,{passive:true});window.addEventListener('resize',scheduleReadingPosition);window.addEventListener('pageshow',scheduleReadingPosition);updateReadingPosition();
