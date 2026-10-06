@@ -16,10 +16,10 @@ def run(*args):
   raise RuntimeError('Browser check failed: '+' '.join(args))
 try:
  run('open',url)
- for test in ['browser-smoke.js','focus-check.js','navigation-check.js','responsive-focus.js','print-check.js','clipboard-check.js']:
+ for test in ['browser-smoke.js','focus-check.js','navigation-check.js','responsive-focus.js','print-check.js','clipboard-check.js','no-script-check.js']:
   print('\nCHECK:',test,flush=True)
   run('run-code','--filename=docs/'+test)
- print('\nPASS: all six browser suites.',flush=True)
+ print('\nPASS: all seven browser suites.',flush=True)
 finally:
  # Close even when a suite fails; never leave an unattended browser daemon.
  subprocess.run(['playwright-cli','-s='+session,'close'],cwd=root,env=env,timeout=30,check=False)
