@@ -31,9 +31,11 @@ PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check open http://127.0.
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/browser-smoke.js
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/focus-check.js
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/performance-check.js
+PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/throttled-performance.js
+PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check eval '()=>window.sigmaThrottled'
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check close
 ```
-Performance script measures localhost fresh browser contexts; results are not production field Core Web Vitals. Automated accessibility checks do not certify complete WCAG compliance.
+The original performance script measures localhost fresh contexts. The throttled script uses the active site's root with three cold contexts, 150ms latency, 1.6Mbps down / 750Kbps up and 4x CPU slowdown. Results are laboratory samples, not production field Core Web Vitals; compare under identical host/conditions. Automated accessibility checks do not certify complete WCAG compliance.
 
 ## Content and fonts
 Company source provenance is documented in [design notes](docs/design-and-sources.md), and iteration reports record checks and limits. Recheck official claims before commercial release. The original website's displayed email differs from its mailto link; do not guess a recipient or turn draft creation into transmission without confirmation.
