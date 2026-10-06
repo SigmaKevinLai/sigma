@@ -1,0 +1,32 @@
+'use strict';
+const menu = document.querySelector('.menu-toggle');
+const nav = document.querySelector('#navigation');
+function closeMenu(){menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','開啟導覽選單');nav.classList.remove('open');}
+menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'關閉導覽選單':'開啟導覽選單');nav.classList.toggle('open',open);});
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+document.addEventListener('click',e=>{if(!e.target.closest('.header'))closeMenu();});
+const products={
+ diecast:{name:'再生鋁合金',eyebrow:'01 / DIE CASTING ALLOYS',description:'讓再生鋁成為精密製造的起點。新格生產鑄造鋁合金錠與鋁液，服務汽機車零部件、家電與工業裝備等多種應用。',specs:[['原站列示型號','ADC 3 / ADC 6 / ADC 10 / ADC 12 / ADC 14'],['供應形式','鋁合金錠、鋁液'],['應用方向','壓鑄與澆鑄、汽機車、家電、產業機械']],topic:'再生鋁合金'},
+ a356:{name:'A356.2 合金',eyebrow:'02 / PRECISION CASTING',description:'兼具輕量化、高強度、易鑄造與耐腐蝕特性的鋁合金。原站介紹由重慶綦江基地專業化生產，面向汽車、航空、機械與電子等材料應用。',specs:[['合金系列','A356.2'],['生產佈局','重慶綦江基地（依原站介紹）'],['應用方向','輕量化零件、精密鑄造']],topic:'A356.2 合金'},
+ slab:{name:'高端扁錠與罐材合金',eyebrow:'03 / ROLLING & PACKAGING',description:'讓包裝材料回到高價值循環。原站介紹 3104 易開罐系列，以及用於高端鋁板帶材的 3104 / 5182 合金扁錠。',specs:[['合金系列','3104 / 5182'],['3104 應用','啤酒與飲料罐罐身'],['5182 應用','罐蓋、拉環與汽車板材']],topic:'高端扁錠與罐材合金'},
+ liquid:{name:'鋁液直供',eyebrow:'04 / MOLTEN ALUMINUM',description:'從熔煉到壓鑄，更直接地連接製造現場。原站介紹以鋁液直供銜接壓鑄成型，形成短流程供應體系，減少再熔煉環節。',specs:[['供應形式','保溫運輸的鋁液'],['製程路徑','調質爐 → 保溫爐 → 鋁湯包 → 配送'],['合作條件','供應距離、合金規格與產量須個別評估']],topic:'鋁液直供'}
+};
+const tabs=[...document.querySelectorAll('[role="tab"]')];
+function selectTab(tab){tabs.forEach(t=>{t.setAttribute('aria-selected',String(t===tab));t.tabIndex=t===tab?0:-1;});document.querySelector('#product-grid').setAttribute('aria-labelledby',tab.id);document.querySelectorAll('.product-card').forEach(c=>c.hidden=tab.dataset.filter!=='all'&&c.dataset.category!==tab.dataset.filter);}
+tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>selectTab(tab));tab.addEventListener('keydown',e=>{let target;if(e.key==='ArrowRight')target=tabs[(i+1)%tabs.length];if(e.key==='ArrowLeft')target=tabs[(i-1+tabs.length)%tabs.length];if(e.key==='Home')target=tabs[0];if(e.key==='End')target=tabs.at(-1);if(target){e.preventDefault();selectTab(target);target.focus();}});});
+const dialog=document.querySelector('#product-dialog');
+let selectedProduct;
+document.querySelectorAll('.product-card').forEach(card=>card.addEventListener('click',()=>{selectedProduct=products[card.dataset.product];document.querySelector('#dialog-title').textContent=selectedProduct.name;document.querySelector('#dialog-eyebrow').textContent=selectedProduct.eyebrow;document.querySelector('#dialog-description').textContent=selectedProduct.description;const dl=document.querySelector('#dialog-specs');dl.replaceChildren();selectedProduct.specs.forEach(([key,value])=>{const row=document.createElement('div');const dt=document.createElement('dt');dt.textContent=key;const dd=document.createElement('dd');dd.textContent=value;row.append(dt,dd);dl.append(row);});dialog.showModal();document.body.style.overflow='hidden';}));
+function closeDialog(){dialog.close();document.body.style.overflow='';}
+document.querySelector('.dialog-close').addEventListener('click',closeDialog);
+dialog.addEventListener('close',()=>document.body.style.overflow='');
+dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDialog();}});
+document.querySelector('#dialog-inquiry').addEventListener('click',()=>{document.querySelector('#inquiry-topic').value=selectedProduct.topic;closeDialog();setTimeout(()=>document.querySelector('#inquiry-name').focus({preventScroll:true}),350);});
+const bases={kaohsiung:['高雄生產基地','集團臺灣生產佈局；SBI 為原站列示的 LME 註冊品牌之一。','高雄市小港區台機路 24 號','+886-7-801-9111'],zhejiang:['浙江生產基地','連結華東產業鏈的集團生產基地。','浙江嘉興嘉善縣經濟技術開發區黃浦路 111 號','+86-573-8466-1818'],yongchuan:['重慶永川生產基地','再生鋁與鋁製汽車零部件產業園，發展鋁液直供與壓鑄合作。','重慶永川工業園區港橋工業園','+86-23-4940-3666'],qijiang:['重慶綦江生產基地','原站介紹 A356.2 合金系列的專業化生產基地。','',''],rizhao:['日照生產基地','集團生產佈局之一，原站列入 3104 易開罐系列生產基地。','山東日照經濟技術開發區成都路 300 號','+86-633-218-1111'],chengdu:['成都生產基地','服務西南地區的集團生產佈局。','四川成都市郫都區現代工業港南片區濱清路 439 號','+86-28-8283-1701'],baotou:['包頭生產基地','集團生產與環保科技佈局之一。','內蒙古包頭市高新區希望工業園區金翼路 2 號','+86-472-520-0588'],binzhou:['濱州生產基地','原站列入 3104 易開罐系列生產基地。','山東濱州鄒平市經濟技術開發區金玉大道以南月河三路以西','+86-543-210-1111'],gongyi:['鞏義生產基地','集團生產與環保科技佈局，原站列入 3104 易開罐系列生產基地。','河南鞏義站街鎮豫聯工業園南環路鳳凰台隧道東出口','+86-371-6032-5266']};
+function updateBase(){const [name,description,address,phone]=bases[document.querySelector('#base-select').value];const el=document.querySelector('#base-description');el.replaceChildren();const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.textContent=description;el.append(h,p);if(address){const contact=document.createElement('p');contact.textContent=address;contact.append(document.createElement('br'));const a=document.createElement('a');a.href='tel:'+phone.replace(/-/g,'');a.textContent=phone;a.className='base-phone';contact.append(a);el.append(contact);}}
+document.querySelector('#base-select').addEventListener('change',updateBase);updateBase();
+document.querySelector('#inquiry-form').addEventListener('submit',e=>{e.preventDefault();const data=new FormData(e.currentTarget);const subject='材料合作詢問｜'+data.get('topic');const body=`您好，我想詢問以下材料合作需求：\n\n姓名：${data.get('name')}\n電子郵件：${data.get('email')}\n需求方向：${data.get('topic')}\n\n${data.get('message')}\n\n（此信件由 SIGMA 網站設計展示產生。請於寄送前確認官方收件信箱。）`;window.location.href='mailto:info@sigmacorp.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);document.querySelector('#form-status').textContent='已建立信件草稿連結。若郵件程式未開啟，請透過上方官方聯絡資訊洽詢；此表單尚未替您寄送任何資料。';});
+document.querySelector('#year').textContent=new Date().getFullYear();
+const sections=document.querySelectorAll('main section[id]');
+if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting)nav.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.hash==='#'+entry.target.id));});},{rootMargin:'-15% 0px -55% 0px'});sections.forEach(s=>observer.observe(s));}
