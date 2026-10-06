@@ -1,7 +1,7 @@
 // Screenshot every zh-Hant page at desktop and mobile widths into docs/*.png (gitignored).
 async (page) => {
  const base = new URL('/', page.url()).href;
- const routes = ['', 'about/', 'products/', 'technology/', 'sustainability/', 'support/', 'locations/', 'contact/', 'en/'];
+ const routes = ['', 'about/', 'products/', 'technology/', 'sustainability/', 'support/', 'locations/', 'contact/', 'credits/', 'en/'];
  const out = [];
  for (const [w, tag] of [[1440, 'd'], [390, 'm']]) {
   await page.setViewportSize({ width: w, height: 900 });

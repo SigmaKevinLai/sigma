@@ -2,7 +2,7 @@
 
 [Live GitHub Pages](https://ed100084.github.io/sigma/)
 
-Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、鋅合金). Traditional Chinese content, language framework for 简体中文 / English / 日本語. Industrial style: graphite, mineral white, molten orange; isometric technical line art. Static HTML/CSS/JS, no framework, no runtime third-party requests.
+Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、鋅合金). Traditional Chinese content, language framework for 简体中文 / English / 日本語. Light aluminium palette: slate ink, mineral white, molten-orange accents; isometric line art plus three graded stock photos (not SIGMA facilities). Static HTML/CSS/JS, no framework, no runtime third-party requests.
 
 ## Structure
 | Path | Page |
@@ -15,6 +15,7 @@ Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、�
 | `/support/` | 技術支援（37 則可搜尋問答、壓鑄參數表） |
 | `/locations/` | 全球據點（14 個據點，可篩選） |
 | `/contact/` | 聯絡我們（表單產生寄往 info@sigmasha.com 的電子郵件） |
+| `/credits/` | 圖片來源（作者、授權、修改說明；僅繁中） |
 | `/zh-hans/` `/en/` `/ja/` | 各語言同路由；未翻譯頁為 noindex 佔位頁，連回繁中 |
 
 ## Editing content
@@ -27,9 +28,12 @@ All HTML is generated. Do not edit the HTML files by hand.
 | `tools/i18n.py` | Languages, routes, UI strings |
 | `tools/build.py` | Page bodies and layout; `VERSION` is the asset cache key (bump on every CSS/JS/font change, also in `assets/site.css` font URL) |
 | `tools/art.py` | Generates `src/art/*.svg` isometric illustrations |
+| `tools/home_refresh.py` | Stock photo list with author/licence (feeds homepage and `/credits/`) |
+| `tools/photo_grade.mjs` | Crops every photo to 4:3 and applies one shared grade → `assets/photos/*.webp` |
 
 ```sh
 python3 tools/art.py          # only when illustrations change
+NODE_PATH=/tmp/fontwork/node_modules node tools/photo_grade.mjs /path/to/commons-originals   # only when photos change
 python3 tools/build.py
 NODE_PATH=/tmp/fontwork/node_modules node tools/font_subset.mjs   # after copy changes; setup in file header
 ```
@@ -39,7 +43,7 @@ To translate a language: add body builders for it in `build.py`, register them i
 ```sh
 python3 -m http.server 4286 --bind 127.0.0.1
 python3 docs/verify-site.py [--source]    # links, ids, aria refs, wording, 40 ADC values vs source sheet
-python3 docs/run-browser-checks.py        # 4 widths × 8 pages, menu, language switch, comparison, search, filter, form, axe, no-JS
+python3 docs/run-browser-checks.py        # 4 widths × 9 pages, menu, language switch, comparison, search, filter, form, axe, no-JS
 python3 docs/check-public.py              # after deploy: public bytes == checkout
 ```
 `docs/throttled-performance.js` (via `playwright-cli run-code`) gives lab LCP/CLS under 150 ms latency, 1.6 Mbps, 4× CPU. Lab results are not field Core Web Vitals; axe passing does not certify WCAG conformance.

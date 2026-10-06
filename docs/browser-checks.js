@@ -7,7 +7,7 @@ async (page) => {
  const errors = [];
  page.on('pageerror', e => errors.push(e.message));
  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
- const routes = ['', 'about/', 'products/', 'technology/', 'sustainability/', 'support/', 'locations/', 'contact/'];
+ const routes = ['', 'about/', 'products/', 'technology/', 'sustainability/', 'support/', 'locations/', 'contact/', 'credits/'];
 
  // 1. Every page, four widths: no horizontal overflow, single h1, touch targets.
  for (const w of [320, 390, 768, 1440]) {
@@ -27,7 +27,7 @@ async (page) => {
    if (res.small.length) fail(`${r} small targets at ${w}: ${res.small.join(' | ')}`);
   }
  }
- log.push('layout 4 widths × 8 pages');
+ log.push('layout 4 widths × 9 pages');
 
  // 2. Mobile menu: open, focus, Escape restores focus, aria state.
  await page.setViewportSize({ width: 390, height: 844 });
@@ -118,7 +118,7 @@ async (page) => {
    const v = await page.evaluate(async () => (await axe.run(document, { resultTypes: ['violations'] })).violations.map(x => `${x.id}(${x.nodes.length})`));
    if (v.length) fail(`axe ${r || 'home'}: ${v.join(', ')}`);
   }
-  log.push('axe 9 pages: 0 violations');
+  log.push('axe 10 pages: 0 violations');
  }
 
  // 9. No-JS baseline: content visible, enhancements hidden.

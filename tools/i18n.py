@@ -21,7 +21,7 @@ LANGS = {
         group='SIGMA 新格集團', tagline='RECYCLING FOR A BETTER TOMORROW',
         footer_about='1978 年創立，深耕再生鋁合金、鋅合金製造與廢金屬貿易。',
         footer_sitemap='網站導覽', footer_contact='集團總部', top='回到頂端',
-        stub_title='此頁面翻譯準備中', stub_body='', stub_cta='', breadcrumb='目前位置')),
+        stub_title='此頁面翻譯準備中', stub_body='', stub_cta='', breadcrumb='目前位置', credits='圖片來源')),
     'zh-Hans': dict(prefix='zh-hans/', short='简中', name='简体中文', og='zh_CN', ui=dict(
         home='首页', about='关于新格', products='产品中心', technology='制程与品质', sustainability='永续循环',
         support='技术支持', locations='全球据点', contact='联系我们',

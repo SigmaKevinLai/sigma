@@ -12,12 +12,12 @@ import re
 from i18n import LANGS, ROUTES, NAV
 from site_data import EMAIL, HQ_PHONE, ADC, ADC_ELEMENTS, ZINC, ZINC_ELEMENTS, LOCATIONS, HISTORY
 import faq
-from home_refresh import photo, credits
+from home_refresh import photo, PHOTOS
 
 ROOT = Path(__file__).resolve().parent.parent
 ART = ROOT / 'src' / 'art'
 BASE_URL = 'https://ed100084.github.io/sigma/'   # change when the official domain goes live
-VERSION = '20261006-43'
+VERSION = '20261006-44'
 GENERATED = []
 TRANSLATED = {'zh-Hant'}  # languages with full page bodies; others get localized placeholders
 
@@ -39,8 +39,16 @@ def art(name, cls='', label=None):
     return svg
 
 
+EXTRA_ROUTES = [('credits', 'credits/')]  # zh-Hant only; not mirrored into other languages
+
+
 def route_path(key):
-    return dict(ROUTES)[key]
+    return dict(ROUTES + EXTRA_ROUTES)[key]
+
+
+def lang_key(key):
+    """Route to use when switching language: zh-Hant-only pages fall back to home."""
+    return key if key in dict(ROUTES) else 'home'
 
 
 class Page:
@@ -68,7 +76,7 @@ def header(p):
     nav = ''.join(
         f'<li><a href="{p.url(k)}"{" aria-current=\"page\"" if k == p.key else ""}>{e(ui[k])}</a></li>' for k in NAV)
     langs = ''.join(
-        f'<li><a href="{p.url(p.key, code)}" hreflang="{code}" lang="{code}"'
+        f'<li><a href="{p.url(lang_key(p.key), code)}" hreflang="{code}" lang="{code}"'
         f'{" aria-current=\"true\"" if code == p.lang else ""}>'
         f'<span>{e(meta["short"])}</span>{e(meta["name"])}</a></li>' for code, meta in LANGS.items())
     return f'''<a class="skip" href="#main">{e(ui['skip'])}</a>
@@ -100,7 +108,7 @@ def globe():
 def footer(p):
     ui = LANGS[p.lang]['ui']
     links = ''.join(f'<li><a href="{p.url(k)}">{e(ui[k])}</a></li>' for k in NAV + ['contact'])
-    langs = ''.join(f'<li><a href="{p.url(p.key, c)}" hreflang="{c}" lang="{c}">{e(m["name"])}</a></li>' for c, m in LANGS.items())
+    langs = ''.join(f'<li><a href="{p.url(lang_key(p.key), c)}" hreflang="{c}" lang="{c}">{e(m["name"])}</a></li>' for c, m in LANGS.items())
     return f'''<footer class="site-footer">
  <div class="wrap footer-grid">
   <div class="footer-brand"><a class="logo" href="{p.url('home')}">{logo()}<span class="logo-text"><b>SIGMA</b><small>{e(ui['group'].replace('SIGMA ', ''))}</small></span></a>
@@ -110,7 +118,7 @@ def footer(p):
    <a href="tel:{HQ_PHONE.replace('-', '')}">{HQ_PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></address></div>
   <nav aria-label="{e(ui['language'])}"><h2>{e(ui['language'])}</h2><ul>{langs}</ul></nav>
  </div>
- <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><a href="{p.asset('credits/')}">圖片來源</a><a href="#top">{e(ui['top'])} ↑</a></div>
+ <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><a href="{p.url('credits', 'zh-Hant')}">圖片來源</a><a href="#top">{e(ui['top'])} ↑</a></div>
 </footer>'''
 
 
@@ -121,7 +129,7 @@ def document(p, title, description, body, index=True):
     if index:
         alternates = ''.join(
             f'<link rel="alternate" hreflang="{c}" href="{BASE_URL + LANGS[c]["prefix"] + route_path(p.key)}">'
-            for c in LANGS if c in TRANSLATED)
+            for c in LANGS if c in TRANSLATED and (c == 'zh-Hant' or p.key in dict(ROUTES)))
         alternates += f'<link rel="alternate" hreflang="x-default" href="{BASE_URL + route_path(p.key)}">'
     robots = '' if index else '<meta name="robots" content="noindex">'
     font_preload = ''  # 400 KB CJK subset loads with font-display:swap; not preloaded to protect LCP
@@ -133,7 +141,7 @@ def document(p, title, description, body, index=True):
 <title>{e(full_title)}</title>
 <meta name="description" content="{e(description)}">{robots}
 <link rel="canonical" href="{canonical}">{alternates}
-<meta name="theme-color" content="#191c1b">
+<meta name="theme-color" content="#fafbf9">
 <meta property="og:type" content="website"><meta property="og:site_name" content="{e(meta['ui']['group'])}">
 <meta property="og:title" content="{e(full_title)}"><meta property="og:description" content="{e(description)}">
 <meta property="og:url" content="{canonical}"><meta property="og:locale" content="{meta['og']}">
@@ -142,7 +150,7 @@ def document(p, title, description, body, index=True):
 {font_preload}<link rel="stylesheet" href="{p.asset('assets/site.css')}?v={VERSION}">
 <script src="{p.asset('assets/site.js')}?v={VERSION}" defer></script>
 </head>
-<body class="page-{p.key}{" light-home" if p.key == "home" and p.lang == "zh-Hant" else ""}">
+<body class="page-{p.key}">
 {header(p)}
 <main id="main" tabindex="-1">
 {body}
@@ -674,6 +682,25 @@ def contact(p):
 </section>''')
 
 
+def credits(p):
+    items = ''.join(f'''<li class="credit">
+  <img src="{p.asset('assets/photos/' + key + '-640.webp')}" width="640" height="480" alt="{e(title)}，產業示意照片縮圖" loading="lazy">
+  <div><h2>{e(title)}</h2>
+   <dl><div><dt>作者</dt><dd>{e(author)}</dd></div><div><dt>授權</dt><dd><a href="{lic_url}">{e(lic)}</a></dd></div>
+    <div><dt>處理</dt><dd>統一裁切為 4:3、調整色調與亮度、縮放並轉為 WebP</dd></div></dl>
+   <a class="text-link" href="{src}">檢視原始圖片與授權紀錄 <span aria-hidden="true">→</span></a></div></li>'''
+                    for key, (title, author, lic, lic_url, src) in PHOTOS.items())
+    return document(p, '圖片來源', '本站使用之授權圖庫照片的作者、授權條款與原始出處。', f'''
+{page_hero(p, 'IMAGE CREDITS', '圖片來源', '本站選用的圖庫照片僅作產業與材料示意，不代表新格的產品、員工、設備或廠區，也不表示照片作者或原企業對本站的背書。', 'lab')}
+<section class="section">
+ <div class="wrap">
+  {section_head('01', '授權照片', '照片與授權條款', '以下照片皆取自 Wikimedia Commons，依各自授權條款使用。CC BY 授權的照片須標示作者與授權，並說明所做的修改。')}
+  <ul class="credit-list">{items}</ul>
+  <p class="note">插圖、圖示與字型：等角線稿插圖由本站自行繪製；字型 Noto Sans TC 與 Barlow Condensed 採 SIL Open Font License。</p>
+ </div>
+</section>''')
+
+
 BODIES = {'zh-Hant': dict(home=home, about=about, products=products, technology=technology,
                           sustainability=sustainability, support=support, locations=locations, contact=contact)}
 
@@ -719,8 +746,10 @@ def main():
             html = builder(p) if builder else placeholder(p)
             write(p.out + 'index.html', html)
     write('404.html', not_found())
-    write('credits/index.html', credits())
+    cp = Page('zh-Hant', 'credits')
+    write(cp.out + 'index.html', credits(cp))
     urls = ''.join(f'<url><loc>{BASE_URL + LANGS[l]["prefix"] + r}</loc></url>' for l in LANGS if l in TRANSLATED for _, r in ROUTES)
+    urls += ''.join(f'<url><loc>{BASE_URL + r}</loc></url>' for _, r in EXTRA_ROUTES)
     write('sitemap.xml', f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
     write('robots.txt', f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}sitemap.xml\n')
     (ROOT / 'tools' / 'generated.json').write_text(json.dumps(sorted(GENERATED), indent=1) + '\n')
