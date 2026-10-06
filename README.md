@@ -25,7 +25,7 @@ python3 docs/verify-site.py --source
 node --check app.js
 node --check alloys.js
 ```
-Run all five interaction/focus/navigation/print suites with `python3 docs/run-browser-checks.py` (or pass a public site URL). The runner detects CLI-reported errors even when the CLI returns exit code 0 and always closes its browser. Individual tests use the globally installed Playwright CLI:
+Run all six interaction/focus/navigation/print/clipboard suites with `python3 docs/run-browser-checks.py` (or pass a public site URL). The runner detects CLI-reported errors even when the CLI returns exit code 0 and always closes its browser. Individual tests use the globally installed Playwright CLI:
 ```sh
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check open http://127.0.0.1:4286/
 PLAYWRIGHT_MCP_BROWSER=chromium playwright-cli -s=sigma-check run-code --filename=docs/browser-smoke.js
