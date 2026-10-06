@@ -1,0 +1,147 @@
+{
+ "_note": "Stock photos (not SIGMA facilities). Licences verified via the Wikimedia Commons API. focus = crop focus [x, y] in 0..1 for the 4:3 card and the 2:1 banner.",
+ "melt": {
+  "title": "熔爐中的鋁錠",
+  "file": "melt-0056.jpg",
+  "author": "U.S. Department of Agriculture",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:201107120-RD-LSC-0056_-_Flickr_-_USDAgov.jpg",
+  "card": [
+   0.4,
+   0.5
+  ],
+  "wide": [
+   0.5,
+   0.5
+  ]
+ },
+ "ingots": {
+  "title": "鋁錠堆疊",
+  "file": "ingots-truck.jpg",
+  "author": "Fumikas Sagisavas",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Aluminum_ingots_loaded_on_truck.jpg",
+  "card": [
+   0.5,
+   0.6
+  ],
+  "wide": [
+   0.5,
+   0.62
+  ]
+ },
+ "coils": {
+  "title": "鋁線材捲",
+  "file": "coils-14.jpg",
+  "author": "UC Rusal Photo Gallery",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Bratsk_Aluminium_Smelter_(34824706452).jpg",
+  "card": [
+   0.5,
+   0.5
+  ],
+  "wide": [
+   0.5,
+   0.5
+  ]
+ },
+ "inspect": {
+  "title": "鋁材出貨檢查",
+  "file": "b-03.jpg",
+  "author": "UC Rusal Photo Gallery",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Bratsk_Aluminium_Smelter_(34145147434).jpg",
+  "card": [
+   0.6,
+   0.4
+  ],
+  "wide": [
+   0.5,
+   0.35
+  ]
+ },
+ "hall": {
+  "title": "熔煉車間",
+  "file": "hall-06.jpg",
+  "author": "UC Rusal Photo Gallery",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Bratsk_Aluminium_Smelter_(34177686303).jpg",
+  "card": [
+   0.5,
+   0.5
+  ],
+  "wide": [
+   0.5,
+   0.45
+  ]
+ },
+ "recycling": {
+  "title": "壓縮鋁罐回收料",
+  "file": "cans.jpg",
+  "author": "[Tycho]",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Compressed_aluminium_cans.jpg",
+  "card": [
+   0.5,
+   0.45
+  ],
+  "wide": [
+   0.5,
+   0.4
+  ]
+ },
+ "measure": {
+  "title": "鑄件精密量測",
+  "file": "measure-0223.jpg",
+  "author": "U.S. Department of Agriculture",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:201107120-RD-LSC-0223_-_Flickr_-_USDAgov.jpg",
+  "card": [
+   0.4,
+   0.5
+  ],
+  "wide": [
+   0.5,
+   0.5
+  ]
+ },
+ "diecast": {
+  "title": "壓鑄機",
+  "file": "diecast.jpg",
+  "author": "PlugPray",
+  "license": "公眾領域",
+  "license_url": "",
+  "source": "https://commons.wikimedia.org/wiki/File:Diecasting_machine.jpg",
+  "card": [
+   0.6,
+   0.6
+  ],
+  "wide": [
+   0.5,
+   0.6
+  ]
+ },
+ "plant": {
+  "title": "鋁材工廠外觀",
+  "file": "sidal.jpg",
+  "author": "Torsade de Pointes",
+  "license": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "source": "https://commons.wikimedia.org/wiki/File:Duffel_Sidal.jpg",
+  "card": [
+   0.62,
+   0.3
+  ],
+  "wide": [
+   0.5,
+   0.3
+  ]
+ }
+}

@@ -2,7 +2,7 @@
 
 [Live GitHub Pages](https://ed100084.github.io/sigma/)
 
-Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、鋅合金). Traditional Chinese content, language framework for 简体中文 / English / 日本語. Light aluminium palette: slate ink, mineral white, molten-orange accents; isometric line art plus three graded stock photos (not SIGMA facilities). Static HTML/CSS/JS, no framework, no runtime third-party requests.
+Multi-page corporate website for SIGMA Group (再生鋁合金、鋁液直供、鋅合金). Traditional Chinese content, language framework for 简体中文 / English / 日本語. Photo-led layout: full-bleed graded industry photos under a slate scrim for page heroes and feature bands, light content sections, molten-orange accents. Photos are licensed stock imagery (not SIGMA facilities), disclosed on every image and credited on `/credits/`. Static HTML/CSS/JS, no framework, no runtime third-party requests.
 
 ## Structure
 | Path | Page |
@@ -27,12 +27,11 @@ All HTML is generated. Do not edit the HTML files by hand.
 | `tools/faq.py` | Technical Q&A and casting tables |
 | `tools/i18n.py` | Languages, routes, UI strings |
 | `tools/build.py` | Page bodies and layout; `VERSION` is the asset cache key (bump on every CSS/JS/font change, also in `assets/site.css` font URL) |
-| `tools/art.py` | Generates `src/art/*.svg` isometric illustrations |
-| `tools/home_refresh.py` | Stock photo list with author/licence (feeds homepage and `/credits/`) |
-| `tools/photo_grade.mjs` | Crops every photo to 4:3 and applies one shared grade → `assets/photos/*.webp` |
+| `tools/photos.json` | Photo list: source file, author, licence, Commons URL, crop focus |
+| `tools/photos.py` | `img` / `figure` / `backdrop` helpers used by `build.py` |
+| `tools/photo_grade.mjs` | Crops every photo to 4:3 (card) and 16:9 (wide) with one shared grade → `assets/photos/*.webp` |
 
 ```sh
-python3 tools/art.py          # only when illustrations change
 NODE_PATH=/tmp/fontwork/node_modules node tools/photo_grade.mjs /path/to/commons-originals   # only when photos change
 python3 tools/build.py
 NODE_PATH=/tmp/fontwork/node_modules node tools/font_subset.mjs   # after copy changes; setup in file header

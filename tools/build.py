@@ -12,12 +12,11 @@ import re
 from i18n import LANGS, ROUTES, NAV
 from site_data import EMAIL, HQ_PHONE, ADC, ADC_ELEMENTS, ZINC, ZINC_ELEMENTS, LOCATIONS, HISTORY
 import faq
-from home_refresh import photo, PHOTOS
+from photos import PHOTOS, img, figure, backdrop
 
 ROOT = Path(__file__).resolve().parent.parent
-ART = ROOT / 'src' / 'art'
 BASE_URL = 'https://ed100084.github.io/sigma/'   # change when the official domain goes live
-VERSION = '20261006-44'
+VERSION = '20261006-45'
 GENERATED = []
 TRANSLATED = {'zh-Hant'}  # languages with full page bodies; others get localized placeholders
 
@@ -25,18 +24,6 @@ TRANSLATED = {'zh-Hant'}  # languages with full page bodies; others get localize
 def e(text):
     return escape(str(text), quote=True)
 
-
-def art(name, cls='', label=None):
-    svg = (ART / f'{name}.svg').read_text().strip()
-    if label:
-        svg = re.sub(r'aria-label="[^"]*"', f'aria-label="{e(label)}"', svg, count=1)
-    else:
-        svg = svg.replace('role="img" ', '', 1)
-        svg = re.sub(r' aria-label="[^"]*"', ' aria-hidden="true" focusable="false"', svg, count=1)
-    svg = svg.replace(' xmlns="http://www.w3.org/2000/svg"', '', 1)
-    if cls:
-        svg = svg.replace('class="art"', f'class="art {cls}"', 1)
-    return svg
 
 
 EXTRA_ROUTES = [('credits', 'credits/')]  # zh-Hant only; not mirrored into other languages
@@ -118,7 +105,7 @@ def footer(p):
    <a href="tel:{HQ_PHONE.replace('-', '')}">{HQ_PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></address></div>
   <nav aria-label="{e(ui['language'])}"><h2>{e(ui['language'])}</h2><ul>{langs}</ul></nav>
  </div>
- <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><a href="{p.url('credits', 'zh-Hant')}">圖片來源</a><a href="#top">{e(ui['top'])} ↑</a></div>
+ <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><span>本站照片為授權圖庫之產業示意，非新格實拍 · <a href="{p.url('credits', 'zh-Hant')}">圖片來源</a></span><a href="#top">{e(ui['top'])} ↑</a></div>
 </footer>'''
 
 
@@ -161,15 +148,13 @@ def document(p, title, description, body, index=True):
 '''
 
 
-def page_hero(p, eyebrow, title, lead, art_name, crumbs=True):
+def page_hero(p, eyebrow, title, lead, photo, crumbs=True):
     ui = LANGS[p.lang]['ui']
     crumb = (f'<nav class="crumbs" aria-label="{e(ui["breadcrumb"])}"><ol><li><a href="{p.url("home")}">{e(ui["home"])}</a></li>'
              f'<li><span aria-current="page">{e(ui[p.key])}</span></li></ol></nav>') if crumbs else ''
-    return f'''<section class="page-hero dark">
- <div class="wrap page-hero-grid">
-  <div>{crumb}<p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p class="lead">{lead}</p></div>
-  <div class="page-hero-art">{art(art_name, 'art-dark')}</div>
- </div>
+    return f'''<section class="page-hero photo-hero">
+ {backdrop(p, photo, eager=True)}
+ <div class="wrap"><div class="page-hero-copy">{crumb}<p class="eyebrow">{eyebrow}</p><h1>{title}</h1><p class="lead">{lead}</p></div></div>
 </section>'''
 
 
@@ -187,7 +172,7 @@ def table(spec, cls='data-table'):
 
 
 def cta_band(p, title, text, button):
-    return f'''<section class="cta-band dark"><div class="wrap cta-grid">
+    return f'''<section class="cta-band"><div class="wrap cta-grid">
  <div><h2>{title}</h2><p>{text}</p></div>
  <a class="btn btn-molten btn-lg" href="{p.url('contact')}">{button}<span aria-hidden="true">→</span></a>
 </div></section>'''
@@ -198,14 +183,15 @@ def cta_band(p, title, text, button):
 def home(p):
     products = [
         ('products', '#casting-alloys', 'ingots', '01', '鑄造鋁合金', 'ADC 3 · 6 · 10 · 12 · 14 · A356.2', '以鋁合金錠供應壓鑄與澆鑄產業，可生產日、美、歐及中國國家標準牌號，或依客戶要求訂製。'),
-        ('products', '#molten', 'ladle', '02', '鋁液直供', '200 公里供應圈', '以保溫鋁湯包將熔融鋁液直送壓鑄現場，省去客戶重熔，縮短流程並降低能耗。'),
-        ('products', '#wrought', 'slab', '03', '變形鋁合金與扁錠', '3104 · 5182 · 6063 · 3033', '易開罐料保級還原再利用，扁錠供應高端鋁板帶材：罐身、罐蓋、拉環與汽車板。'),
-        ('products', '#zinc', 'zinc', '04', '鋅合金錠', 'Zamak-3 · Zamak-5 · ZSG-3', '以純鋅錠為原料，依國際標準或客戶需求生產壓鑄用鋅合金錠。'),
+        ('products', '#molten', 'melt', '02', '鋁液直供', '200 公里供應圈', '以保溫鋁湯包將熔融鋁液直送壓鑄現場，省去客戶重熔，縮短流程並降低能耗。'),
+        ('products', '#wrought', 'coils', '03', '變形鋁合金與扁錠', '3104 · 5182 · 6063 · 3033', '易開罐料保級還原再利用，扁錠供應高端鋁板帶材：罐身、罐蓋、拉環與汽車板。'),
+        ('products', '#zinc', 'diecast', '04', '鋅合金錠', 'Zamak-3 · Zamak-5 · ZSG-3', '以純鋅錠為原料，依國際標準或客戶需求生產壓鑄用鋅合金錠。'),
     ]
     cards = ''.join(f'''<li><a class="product-tile" href="{p.url(k, anchor=a)}">
+ <span class="tile-photo">{img(p, ph, alt='', sizes='(max-width: 640px) 92vw, (max-width: 1180px) 46vw, 300px')}</span>
  <span class="tile-index">{i}</span>
  <h3>{t}</h3><p class="tile-spec">{s}</p><p>{d}</p><span class="tile-more">了解規格 <span aria-hidden="true">→</span></span></a></li>'''
-                    for k, a, img, i, t, s, d in products)
+                    for k, a, ph, i, t, s, d in products)
     steps = [('回收', '全球採購網路，依 ISRI 規格購入 Tense、Taint/Tabor、Zorba 等廢鋁。'),
              ('預處理', '破碎、重介質浮選、磁選與脫漆，從源頭提高原料純淨度。'),
              ('熔煉精煉', '永磁攪拌與熱交換節能技術，每一爐檢驗成分與金相。'),
@@ -213,7 +199,8 @@ def home(p):
     step_html = ''.join(f'<li><span class="step-no">0{n + 1}</span><h3>{t}</h3><p>{d}</p></li>' for n, (t, d) in enumerate(steps))
     return document(p, 'SIGMA 新格集團｜再生鋁合金・鋁液直供・鋅合金',
                     '新格集團 1978 年創立，深耕再生鋁合金、鋁液直供、鋅合金製造與廢金屬貿易，在臺灣與中國大陸設有九大生產基地，年產能逾 120 萬噸。',
-                    f'''<section class="home-hero dark">
+                    f'''<section class="home-hero photo-hero">
+ {backdrop(p, 'melt', eager=True)}
  <div class="wrap hero-grid">
   <div class="hero-copy">
    <p class="eyebrow"><span>SINCE 1978</span>再生鋁合金 · 鋁液直供 · 鋅合金</p>
@@ -222,7 +209,7 @@ def home(p):
    <div class="actions"><a class="btn btn-molten btn-lg" href="{p.url('products')}">產品與規格 <span aria-hidden="true">→</span></a>
     <a class="btn btn-ghost btn-lg" href="{p.url('contact')}">詢價與合作</a></div>
   </div>
-  <div class="hero-art">{photo(p, 'ingots', True)}<p class="hero-caption"><span aria-hidden="true"><small>13</small>Al</span>鋁可無限次循環，<br>再生能耗不到原鋁的 5%</p></div>
+  <p class="hero-caption"><span aria-hidden="true"><small>13</small>Al</span>鋁可無限次循環，<br>再生能耗不到原鋁的 5%</p>
  </div>
  <div class="wrap"><dl class="stat-strip">
   <div><dt>創立</dt><dd><b>1978</b></dd></div>
@@ -246,14 +233,14 @@ def home(p):
    <p class="body-lg">鋁具有優越的再生性能，可多次循環而不影響使用性能。再生鋁製程短、排放少，能耗不到原鋁生產的 5%。新格把城市中的廢舊金屬，重新熔鑄為工業所需的高品質材料。</p>
    <a class="text-link" href="{p.url('technology')}">看完整製程與品質管理 <span aria-hidden="true">→</span></a>
   </div>
-  <div class="cycle-figure">{photo(p, 'recycling')}</div>
+  <div class="cycle-figure">{figure(p, 'recycling')}</div>
  </div>
  <div class="wrap"><ol class="process-steps">{step_html}</ol></div>
 </section>
 
 <section class="section">
  <div class="wrap">
-  <div class="quality-intro">{section_head('03', '品質與信譽', '國際市場<br>認可的品質。')}{photo(p, 'inspection')}</div>
+  <div class="quality-intro">{section_head('03', '品質與信譽', '國際市場<br>認可的品質。')}{figure(p, 'measure')}</div>
   <div class="trust-grid">
    <article class="trust-card"><h3>LME 註冊品牌</h3><p class="brands"><b>SBI</b><b>SIGMA</b><b>ZSM</b></p><p>高雄、上海、漳州三大品牌於倫敦金屬交易所註冊；1996 年成為中國第一家在 LME 註冊的再生鋁廠。</p></article>
    <article class="trust-card"><h3>國際體系認證</h3><ul class="tag-list"><li>IATF 16949</li><li>ISO 9001</li><li>ISO 14001</li><li>ISO 45001</li><li>ISO 50001</li><li>ISO 14021</li></ul><p>中國首批循環經濟試點單位，並獲綠色工廠、高新技術企業等榮譽。</p></article>
@@ -262,7 +249,8 @@ def home(p):
  </div>
 </section>
 
-<section class="section dark network">
+<section class="section photo-band network">
+ {backdrop(p, 'hall')}
  <div class="wrap split">
   <div>
    {section_head('04', '全球據點', '九大生產基地，<br>就近供應。')}
@@ -276,7 +264,7 @@ def home(p):
 
 <section class="section">
  <div class="wrap split">
-  <div>{section_head('05', '永續循環', '連鋁灰，<br>都能再利用。')}</div>
+  <div>{section_head('05', '永續循環', '連鋁灰，<br>都能再利用。')}{figure(p, 'plant')}</div>
   <div><p class="body-lg">2017 年成立環保科技事業部，以自主研發的無害化工藝處理鋁灰，除氟效率大於 99.99%，並轉化為無機人造石、PC 磚與耐火澆注料，朝製程「零排放」邁進。</p>
    <a class="text-link" href="{p.url('sustainability')}">了解永續循環 <span aria-hidden="true">→</span></a></div>
  </div>
@@ -292,7 +280,7 @@ def about(p):
               ('濱州', '8,000'), ('鞏義', '8,000'), ('長春', '6,500'), ('成都', '5,000')]
     plant_rows = ''.join(f'<tr><th scope="row">{a}</th><td>{b}</td></tr>' for a, b in plants)
     return document(p, '關於新格', '新格集團 1978 年創立，主要經營再生鋁合金錠、鋁液直供、鋁合金壓鑄件、鋅合金錠與廢金屬貿易。認識新格的理念、規模、品牌與沿革。', f'''
-{page_hero(p, 'ABOUT SIGMA', '全球再生鋁<br>產業的長期實踐者', '自 1978 年起，新格持續投入資源回收、環境改善與循環利用，以 RECYCLING FOR A BETTER TOMORROW 為經營理念。', 'furnace')}
+{page_hero(p, 'ABOUT SIGMA', '全球再生鋁<br>產業的長期實踐者', '自 1978 年起，新格持續投入資源回收、環境改善與循環利用，以 RECYCLING FOR A BETTER TOMORROW 為經營理念。', 'plant')}
 <section class="section">
  <div class="wrap split">
   <div>{section_head('01', '集團簡介', '把城市礦山，<br>熔鑄為工業材料。')}</div>
@@ -336,7 +324,8 @@ def about(p):
  </div>
 </section>
 
-<section class="section dark">
+<section class="section photo-band">
+ {backdrop(p, 'hall')}
  <div class="wrap split">
   <div>{section_head('04', '產業生態', '重慶新格鋁製<br>汽車零部件產業園')}</div>
   <div class="prose">
@@ -389,7 +378,7 @@ def products(p):
 <section class="product-block" id="casting-alloys" aria-labelledby="h-casting">
  <div class="product-head"><div><p class="eyebrow"><span>01</span>DIE CASTING ALLOYS</p><h2 id="h-casting">鑄造鋁合金錠</h2>
   <p class="body-lg">鋁合金比重僅 2.6–2.7，質輕且機械性質與耐蝕性優秀，廣泛應用於汽機車、產業機械、農漁機具、電氣通信、精密機器與日用品。亞洲地區普遍採用日本 JIS 規格，新格亦可依 DIN、BS、GB、ASTM 等標準生產。</p></div>
-  <div class="product-art">{art('casting')}</div></div>
+  <div class="product-art">{figure(p, 'diecast', sizes='(max-width: 640px) 92vw, 340px')}</div></div>
  <dl class="facts"><div><dt>供應形式</dt><dd>鋁合金錠、鋁液</dd></div><div><dt>主要應用</dt><dd>汽機車零件、家電、產業機械、通訊</dd></div><div><dt>授權產品</dt><dd>K-Alloy™（經許可生產）</dd></div></dl>
  {composition_table('常用鑄造鋁合金化學成分（%，鋁錠與鋁液）', ADC_ELEMENTS, ADC, 'adc-table')}
  <div class="compare" data-compare hidden>
@@ -409,7 +398,7 @@ def products(p):
 <section class="product-block" id="wrought" aria-labelledby="h-wrought">
  <div class="product-head"><div><p class="eyebrow"><span>03</span>WROUGHT ALLOYS &amp; SLABS</p><h2 id="h-wrought">變形鋁合金與高端扁錠</h2>
   <p class="body-lg">以重熔錠與鋁液供應變形鋁合金。2025 年 11 月重慶新格扁錠項目投產，生產高端鋁板帶材的核心原料。</p></div>
-  <div class="product-art">{art('slab')}</div></div>
+  <div class="product-art">{figure(p, 'coils', sizes='(max-width: 640px) 92vw, 340px')}</div></div>
  <ul class="spec-cards">
   <li><b>3104</b><p>易開罐系列。重慶、鞏義、濱州、日照基地專業生產，保級還原，成分、性能與純淨度全面達到食品級標準，實現高價值閉環循環。用於啤酒、飲料罐罐身。</p></li>
   <li><b>5182</b><p>罐蓋、拉環與汽車板用合金扁錠。</p></li>
@@ -421,7 +410,7 @@ def products(p):
 <section class="product-block" id="molten" aria-labelledby="h-molten">
  <div class="product-head"><div><p class="eyebrow"><span>04</span>MOLTEN ALUMINUM</p><h2 id="h-molten">鋁液直供</h2>
   <p class="body-lg">新格首創「鋁液直供－壓鑄成型」短流程體系：熔煉完成的鋁液以保溫鋁湯包直接配送至客戶壓鑄現場，客戶無需再將合金錠重新熔化，節省能源、時間與熔損。</p></div>
-  <div class="product-art">{art('ladle')}</div></div>
+  <div class="product-art">{figure(p, 'melt', sizes='(max-width: 640px) 92vw, 340px')}</div></div>
  <ol class="flow"><li>熔煉精煉</li><li>調質爐</li><li>保溫爐</li><li>鋁湯包</li><li>配送至壓鑄現場</li></ol>
  <dl class="facts"><div><dt>供應半徑</dt><dd>約 200 公里鋁液供應圈</dd></div><div><dt>占產能比重</dt><dd>約 60% 產能以鋁液直供</dd></div><div><dt>合作案例</dt><dd>現代集團日照威亞發動機廠、一汽集團長春總廠等配套工廠</dd></div></dl>
  <p class="note">鋁液直供需依廠區距離、合金牌號、月用量與交付節拍個別評估，歡迎與業務團隊討論。</p>
@@ -429,8 +418,7 @@ def products(p):
 
 <section class="product-block" id="zinc" aria-labelledby="h-zinc">
  <div class="product-head"><div><p class="eyebrow"><span>05</span>ZINC ALLOYS</p><h2 id="h-zinc">鋅合金錠</h2>
-  <p class="body-lg">以純鋅錠為原料，於 5 噸鋅熔解爐生產線生產，在嚴格品質檢測下製成符合國際標準的鋅合金錠，並可依客戶特殊需求訂製。</p></div>
-  <div class="product-art">{art('zinc')}</div></div>
+  <p class="body-lg">以純鋅錠為原料，於 5 噸鋅熔解爐生產線生產，在嚴格品質檢測下製成符合國際標準的鋅合金錠，並可依客戶特殊需求訂製。</p></div></div>
  {composition_table('常用鋅合金錠化學成分（%）', ZINC_ELEMENTS, ZINC, 'zinc-table')}
  <p class="note">表列為主要元素上限或範圍，其餘為鋅（Zn）。</p>
 </section>
@@ -444,7 +432,7 @@ def products(p):
 <section class="product-block" id="sourcing" aria-labelledby="h-sourcing">
  <div class="product-head"><div><p class="eyebrow"><span>07</span>SCRAP SOURCING</p><h2 id="h-sourcing">原料採購</h2>
   <p class="body-lg">新格是臺灣第一家同時成為美國 ISRI 與歐洲 BIR 會員的廢金屬貿易商，每年自世界各地採購超過 30 萬噸各式廢料，除供應自有熔煉廠，也經營廢料貿易。歡迎全球廢料供應商與我們聯繫。</p></div>
-  <div class="product-art">{art('bale')}</div></div>
+  <div class="product-art">{figure(p, 'recycling', sizes='(max-width: 640px) 92vw, 340px')}</div></div>
  <div class="sourcing-grid">
   <div><h3>鋁廢料</h3><ul class="tag-list">{''.join(f'<li>{s}</li>' for s in scrap)}</ul></div>
   <div><h3>銅廢料與重金屬</h3><ul class="tag-list"><li>黃銅廢料</li><li>1 號紫銅</li><li>2 號紫銅</li><li>黃銅雜錠</li><li>重金屬混合切片</li></ul></div>
@@ -474,7 +462,7 @@ def technology(p):
     equipment = ['日本島津／德國 Spectrolab 光譜分析儀', '萬能材料試驗機', '日本 Flux 真空試驗機', '布氏硬度計', '日本 Olympus 金相顯微鏡',
                  'METKON 雙盤拋光機', 'METKON 鑲嵌機', '5 公斤測試電爐', '鋁熔體快速測氫儀']
     return document(p, '製程與品質', '新格鋁合金錠生產流程：原料採購、預處理分選、熔煉精煉、品質檢驗、鑄錠與鋁液交付；以及品管檢驗設備與管理體系。', f'''
-{page_hero(p, 'PROCESS &amp; QUALITY', '製程與品質', '從原料進廠到成品出貨，每一個階段——原料篩選、熔煉、精煉、鑄錠、包裝——都層層把關。', 'lab')}
+{page_hero(p, 'PROCESS &amp; QUALITY', '製程與品質', '從原料進廠到成品出貨，每一個階段——原料篩選、熔煉、精煉、鑄錠、包裝——都層層把關。', 'melt')}
 <section class="section">
  <div class="wrap">
   {section_head('01', '生產流程', '鋁合金錠<br>生產流程')}
@@ -498,7 +486,8 @@ def technology(p):
  <div class="wrap split align-start">
   <div>{section_head('03', '品質管理', '品質第一，<br>全程管理。')}
    <p class="body-lg">新格採用 IATF 16949、ISO 9001 等國際品質體系作為全廠管理系統，持續改進以滿足顧客要求。品管團隊同時為客戶提供免費售後諮詢；客戶生產中遇到品質相關困難時，我們協助解決。</p>
-   <a class="text-link" href="{p.url('support')}">查看鑄造技術問答 <span aria-hidden="true">→</span></a></div>
+   <a class="text-link" href="{p.url('support')}">查看鑄造技術問答 <span aria-hidden="true">→</span></a>
+   {figure(p, 'inspect', 'spaced')}</div>
   <div><h3 class="h-small">品管檢驗室主要設備</h3><ul class="check-list">{''.join(f'<li>{x}</li>' for x in equipment)}</ul>
    <h3 class="h-small">每爐檢驗項目</h3><ul class="tag-list"><li>化學成分</li><li>金相組織</li><li>含渣量</li><li>含氣量</li><li>拉力</li></ul></div>
  </div>
@@ -508,7 +497,7 @@ def technology(p):
 
 def sustainability(p):
     return document(p, '永續循環', '新格的永續實踐：再生鋁循環、鋁灰無害化與資源化產品、收塵與廢水循環設備，以及企業社會責任方針。', f'''
-{page_hero(p, 'SUSTAINABILITY', '永續循環', '以「資源回收、環境改善、回饋社會」為社會責任方針，持續定義綠色工業的新標準。', 'cycle')}
+{page_hero(p, 'SUSTAINABILITY', '永續循環', '以「資源回收、環境改善、回饋社會」為社會責任方針，持續定義綠色工業的新標準。', 'recycling')}
 <section class="section">
  <div class="wrap split">
   <div>{section_head('01', '再生鋁', '再生，<br>是最好的節能。')}</div>
@@ -540,7 +529,8 @@ def sustainability(p):
   </div>
  </div>
 </section>
-<section class="section dark">
+<section class="section photo-band">
+ {backdrop(p, 'inspect')}
  <div class="wrap split align-start">
   <div>{section_head('04', '企業社會責任', '以人為本，<br>回饋社會。')}</div>
   <div class="prose">
@@ -584,7 +574,7 @@ def support(p):
     blocks = ''.join(f'<section class="qa-group" id="group-{k}" aria-labelledby="h-{k}" data-qa-group><h2 id="h-{k}">{t}</h2>{qa_items(k + "-", items)}</section>' for k, t, items in groups)
     coatings = '<ul class="check-list"><li>5% 氧化鋅 + 1.2% 水玻璃 + 水</li><li>膠體石墨</li><li>3–5% 聚乙烯 + 煤油</li></ul>'
     return document(p, '技術支援', f'新格鑄造技術支援：{total} 則鋁合金、鋅合金、銅合金鑄造問題與材料知識問答，以及澆注溫度、模具溫度與壓鑄缺陷對照表。', f'''
-{page_hero(p, 'TECHNICAL SUPPORT', '鑄造技術支援', '整理新格品管團隊多年協助客戶排除鑄造問題的經驗。找不到答案時，歡迎直接聯繫，我們提供免費的售後技術諮詢。', 'casting')}
+{page_hero(p, 'TECHNICAL SUPPORT', '鑄造技術支援', '整理新格品管團隊多年協助客戶排除鑄造問題的經驗。找不到答案時，歡迎直接聯繫，我們提供免費的售後技術諮詢。', 'measure')}
 <section class="section">
  <div class="wrap support-layout">
   <div class="support-side">
@@ -622,7 +612,7 @@ def locations(p):
     bases = [l for l in LOCATIONS if l['kind'] == 'base']
     offices = [l for l in LOCATIONS if l['kind'] == 'office']
     return document(p, '全球據點', '新格集團全球據點：高雄總部與浙江、重慶、日照、成都、包頭、濱州、鞏義等九大生產基地，以及長春、漳州、東莞、美國、日本業務據點的地址與電話。', f'''
-{page_hero(p, 'GLOBAL NETWORK', '全球據點', '九大生產基地就近供應鋁合金錠與鋁液，業務與貿易據點橫跨臺灣、中國大陸、美國與日本。', 'map')}
+{page_hero(p, 'GLOBAL NETWORK', '全球據點', '九大生產基地就近供應鋁合金錠與鋁液，業務與貿易據點橫跨臺灣、中國大陸、美國與日本。', 'hall')}
 <section class="section">
  <div class="wrap">
   <div class="filter-bar" data-loc-filter hidden role="group" aria-label="篩選據點">
@@ -644,7 +634,7 @@ def contact(p):
     topics = [('quote', '產品詢價'), ('molten', '鋁液直供合作'), ('supply', '原料供應'), ('support', '技術支援'), ('other', '其他')]
     topic_html = ''.join(f'<option value="{k}">{t}</option>' for k, t in topics)
     return document(p, '聯絡我們', f'聯絡新格集團：產品詢價、鋁液直供合作、原料供應與技術支援。電子郵件 {EMAIL}，總部電話 {HQ_PHONE}。', f'''
-{page_hero(p, 'CONTACT', '聯絡我們', '產品詢價、鋁液直供合作、原料供應或技術問題，請留下需求，業務與品管團隊將儘快回覆。', 'ladle')}
+{page_hero(p, 'CONTACT', '聯絡我們', '產品詢價、鋁液直供合作、原料供應或技術問題，請留下需求，業務與品管團隊將儘快回覆。', 'inspect')}
 <section class="section">
  <div class="wrap contact-layout">
   <form class="inquiry" action="mailto:{EMAIL}" method="post" enctype="text/plain" data-inquiry novalidate>
@@ -683,20 +673,23 @@ def contact(p):
 
 
 def credits(p):
+    def lic_html(lic, url):
+        return f'<a href="{url}">{e(lic)}</a>' if url else e(lic)
     items = ''.join(f'''<li class="credit">
-  <img src="{p.asset('assets/photos/' + key + '-640.webp')}" width="640" height="480" alt="{e(title)}，產業示意照片縮圖" loading="lazy">
+  {img(p, key, alt=title + '，產業示意照片縮圖', sizes='(max-width: 640px) 92vw, 320px')}
   <div><h2>{e(title)}</h2>
-   <dl><div><dt>作者</dt><dd>{e(author)}</dd></div><div><dt>授權</dt><dd><a href="{lic_url}">{e(lic)}</a></dd></div>
-    <div><dt>處理</dt><dd>統一裁切為 4:3、調整色調與亮度、縮放並轉為 WebP</dd></div></dl>
+   <dl><div><dt>作者</dt><dd>{e(author)}</dd></div><div><dt>授權</dt><dd>{lic_html(lic, lic_url)}</dd></div>
+    <div><dt>處理</dt><dd>裁切為 4:3 與 16:9、統一色調與亮度、縮放並轉為 WebP</dd></div></dl>
    <a class="text-link" href="{src}">檢視原始圖片與授權紀錄 <span aria-hidden="true">→</span></a></div></li>'''
-                    for key, (title, author, lic, lic_url, src) in PHOTOS.items())
+                    for key, (title, author, lic, lic_url, src) in
+                    ((k, (v['title'], v['author'], v['license'], v['license_url'], v['source'])) for k, v in PHOTOS.items()))
     return document(p, '圖片來源', '本站使用之授權圖庫照片的作者、授權條款與原始出處。', f'''
-{page_hero(p, 'IMAGE CREDITS', '圖片來源', '本站選用的圖庫照片僅作產業與材料示意，不代表新格的產品、員工、設備或廠區，也不表示照片作者或原企業對本站的背書。', 'lab')}
+{page_hero(p, 'IMAGE CREDITS', '圖片來源', '本站選用的圖庫照片僅作產業與材料示意，不代表新格的產品、員工、設備或廠區，也不表示照片作者或原企業對本站的背書。', 'coils')}
 <section class="section">
  <div class="wrap">
-  {section_head('01', '授權照片', '照片與授權條款', '以下照片皆取自 Wikimedia Commons，依各自授權條款使用。CC BY 授權的照片須標示作者與授權，並說明所做的修改。')}
+  {section_head('01', '授權照片', '照片與授權條款', '以下照片皆取自 Wikimedia Commons，依各自授權條款使用（CC0、公眾領域或 CC BY）。CC BY 授權的照片於此標示作者、授權與所做的修改。')}
   <ul class="credit-list">{items}</ul>
-  <p class="note">插圖、圖示與字型：等角線稿插圖由本站自行繪製；字型 Noto Sans TC 與 Barlow Condensed 採 SIL Open Font License。</p>
+  <p class="note">圖示與字型：圖示由本站自行繪製；字型 Noto Sans TC 與 Barlow Condensed 採 SIL Open Font License。</p>
  </div>
 </section>''')
 
@@ -708,13 +701,13 @@ BODIES = {'zh-Hant': dict(home=home, about=about, products=products, technology=
 def placeholder(p):
     ui = LANGS[p.lang]['ui']
     return document(p, ui['stub_title'] if p.key == 'home' else f'{ui[p.key]}', ui['stub_body'], f'''
-<section class="page-hero dark stub">
- <div class="wrap page-hero-grid">
-  <div><p class="eyebrow">{e(LANGS[p.lang]['name'])}</p><h1>{e(ui[p.key])}</h1>
+<section class="page-hero photo-hero stub">
+ {backdrop(p, 'melt', eager=True)}
+ <div class="wrap">
+  <div class="page-hero-copy"><p class="eyebrow">{e(LANGS[p.lang]['name'])}</p><h1>{e(ui[p.key])}</h1>
    <p class="lead">{e(ui['stub_title'])}</p><p>{e(ui['stub_body'])}</p>
    <div class="actions"><a class="btn btn-molten btn-lg" href="{p.url(p.key, 'zh-Hant')}" hreflang="zh-Hant">{e(ui['stub_cta'])} <span aria-hidden="true">→</span></a>
     <a class="btn btn-ghost btn-lg" href="mailto:{EMAIL}">{EMAIL}</a></div></div>
-  <div class="page-hero-art">{art('hero', 'art-dark')}</div>
  </div>
 </section>''', index=False)
 
@@ -723,11 +716,11 @@ def not_found():
     p = Page('zh-Hant', 'home')
     p.out = '404.html'
     p.root = '/sigma/'  # 404 is served at arbitrary depth; GitHub Pages project path
-    body = f'''<section class="page-hero dark stub"><div class="wrap page-hero-grid"><div>
+    body = f'''<section class="page-hero photo-hero stub">{backdrop(p, 'ingots', eager=True)}<div class="wrap"><div class="page-hero-copy">
 <p class="eyebrow">404 · PAGE NOT FOUND</p><h1>找不到這個頁面</h1>
 <p class="lead">頁面可能已搬移。舊網站的網址已不再使用，請從以下入口繼續瀏覽。</p>
 <div class="actions"><a class="btn btn-molten btn-lg" href="{p.root}">回到首頁</a><a class="btn btn-ghost btn-lg" href="{p.root}products/">產品中心</a><a class="btn btn-ghost btn-lg" href="{p.root}contact/">聯絡我們</a></div>
-</div><div class="page-hero-art">{art('ingots', 'art-dark')}</div></div></section>'''
+</div></div></section>'''
     return document(p, '找不到頁面', '找不到頁面', body, index=False)
 
 

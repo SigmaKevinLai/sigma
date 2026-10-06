@@ -8,7 +8,8 @@ import json, sys, urllib.request
 root = Path(__file__).resolve().parent.parent
 base = 'https://ed100084.github.io/sigma/'
 files = json.loads((root / 'tools/generated.json').read_text()) + [
-    'assets/site.css', 'assets/site.js', 'assets/favicon.svg', 'assets/og-image.png', 'assets/fonts/noto-tc-core.woff2']
+    'assets/site.css', 'assets/site.js', 'assets/favicon.svg', 'assets/og-image.png', 'assets/fonts/noto-tc-core.woff2'] + sorted(
+    'assets/photos/' + f.name for f in (root / 'assets/photos').glob('*.webp'))
 for name in files:
     url = base + name.removesuffix('index.html')
     try:
