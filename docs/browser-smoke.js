@@ -22,6 +22,7 @@ async (page) => {
   check(await page.locator('.composition-table .different').count() === 0, 'Identical alloy comparison');
   await page.locator('#tab-casting').click();
   check(await page.locator('.product-card:visible').count() === 3, 'Casting filter count');
+  check((await page.locator('#material-results').innerText()).includes('顯示 3 項'), 'Live material count');
   await page.locator('#tab-casting').press('ArrowRight');
   check(await page.locator('#tab-rolling').getAttribute('aria-selected') === 'true', 'Keyboard tab navigation');
   await page.setViewportSize({ width: 390, height: 844 });
