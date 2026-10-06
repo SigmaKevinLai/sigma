@@ -4,8 +4,11 @@ const nav = document.querySelector('#navigation');
 function closeMenu(){menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','開啟導覽選單');nav.classList.remove('open');}
 menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'關閉導覽選單':'開啟導覽選單');nav.classList.toggle('open',open);if(open)nav.querySelector('a').focus();});
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{closeMenu();const target=document.querySelector(a.hash);if(target){target.tabIndex=-1;target.focus({preventScroll:true});}}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){const restore=nav.contains(document.activeElement);closeMenu();if(restore)menu.focus();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const restore=nav.contains(document.activeElement);closeMenu();if(restore&&compactNavigation.matches)menu.focus();}});
 document.addEventListener('click',e=>{if(!e.target.closest('.header'))closeMenu();});
+const compactNavigation=window.matchMedia('(max-width:900px)');
+let lastHeaderFocus=null;document.addEventListener('focusin',e=>{lastHeaderFocus=e.target.closest('.header')?e.target:null;});
+compactNavigation.addEventListener('change',()=>{const focused=document.activeElement===document.body?lastHeaderFocus:document.activeElement;closeMenu();if(compactNavigation.matches&&nav.contains(focused))menu.focus();else if(!compactNavigation.matches&&focused===menu)nav.querySelector('a').focus();});
 const products={
  diecast:{name:'再生鋁合金',eyebrow:'01 / DIE CASTING ALLOYS',description:'讓再生鋁成為精密製造的起點。新格生產鑄造鋁合金錠與鋁液，服務汽機車零部件、家電與工業裝備等多種應用。',specs:[['原站列示型號','ADC 3 / ADC 6 / ADC 10 / ADC 12 / ADC 14'],['供應形式','鋁合金錠、鋁液'],['應用方向','壓鑄與澆鑄、汽機車、家電、產業機械']],topic:'再生鋁合金'},
  a356:{name:'A356.2 合金',eyebrow:'02 / PRECISION CASTING',description:'兼具輕量化、高強度、易鑄造與耐腐蝕特性的鋁合金。原站介紹由重慶綦江基地專業化生產，面向汽車、航空、機械與電子等材料應用。',specs:[['合金系列','A356.2'],['生產佈局','重慶綦江基地（依原站介紹）'],['應用方向','輕量化零件、精密鑄造']],topic:'A356.2 合金'},
