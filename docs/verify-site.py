@@ -35,7 +35,13 @@ for font in (root/'assets/fonts').glob('*.woff2'):
 for license_name in ['OFL-NotoSansTC.txt','OFL-BarlowCondensed.txt']:
  assert (root/'assets/fonts'/license_name).is_file(),f'Missing font license: {license_name}'
 assert '非官方網站' in (root/'index.html').read_text(),'Missing nonofficial disclosure'
-print('PASS: matching CJK preload, valid WOFF2 headers, retained licenses and concept disclosure.')
+html=(root/'index.html').read_text()
+assert '非官方' in re.search(r'<title>(.*?)</title>',html,re.S).group(1),'Missing title disclosure'
+for attribute in ['name="description"','property="og:title"','property="og:description"']:
+ match=re.search(r'<meta '+re.escape(attribute)+r' content="([^"]+)"',html)
+ assert match and any(term in match.group(1) for term in ['非官方','不是官方']),f'Missing metadata disclosure: {attribute}'
+assert 'property="og:url" content="https://ed100084.github.io/sigma/"' in html,'Wrong sharing destination'
+print('PASS: matching CJK preload, valid WOFF2 headers, licenses and visible/search/sharing disclosures.')
 print(f'PASS: {len(p.ids)} unique IDs, references, anchor links and local assets.')
 if '--source' in sys.argv:
  class Cells(HTMLParser):
