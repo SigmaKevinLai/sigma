@@ -8,6 +8,13 @@ async(page)=>{
  await page.evaluate(()=>window.finishCopy());await page.waitForTimeout(30);
  if(await page.locator('#form-status').innerText()!==status)throw Error('Late copy overwrote clear');
  if(!(await page.locator('#copy-draft').isDisabled()))throw Error('Cleared copy enabled');
+ await page.locator('#inquiry-name').fill('Test');await page.locator('#inquiry-email').fill('test@example.com');await page.locator('#inquiry-message').fill('Original');
+ await page.locator('#inquiry-form button[type=submit]').click();await page.locator('#copy-draft').click();
+ await page.locator('#clear-inquiry').click();
+ await page.locator('#inquiry-name').fill('Test');await page.locator('#inquiry-email').fill('test@example.com');await page.locator('#inquiry-message').fill('Original');
+ await page.locator('#inquiry-form button[type=submit]').click();const rebuilt=await page.locator('#form-status').innerText();
+ await page.evaluate(()=>window.finishCopy());await page.waitForTimeout(30);
+ if(await page.locator('#form-status').innerText()!==rebuilt)throw Error('Old copy affected identical rebuilt draft');
  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>Promise.reject(new Error('Denied for regression'))}}));
  await page.locator('#inquiry-name').fill('Fallback');await page.locator('#inquiry-email').fill('test@example.com');await page.locator('#inquiry-message').fill('Manual copy test');
  await page.locator('#inquiry-form button[type=submit]').click();await page.locator('#copy-draft').click();
