@@ -46,3 +46,7 @@ let navigationFrame=0;
 function updateReadingPosition(){navigationFrame=0;const line=document.querySelector('.header').getBoundingClientRect().height+40;let current;sections.forEach(section=>{if(section.getBoundingClientRect().top<=line)current=section;});nav.querySelectorAll('a').forEach(link=>{const active=!!current&&link.hash==='#'+current.id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
 function scheduleReadingPosition(){if(!navigationFrame)navigationFrame=requestAnimationFrame(updateReadingPosition);}
 window.addEventListener('scroll',scheduleReadingPosition,{passive:true});window.addEventListener('resize',scheduleReadingPosition);window.addEventListener('pageshow',scheduleReadingPosition);updateReadingPosition();
+let printDetails=[];
+function preparePrint(){if(printDetails.length)return;printDetails=[...document.querySelectorAll('main details')].map(el=>[el,el.open]);printDetails.forEach(([el])=>el.open=true);}
+function finishPrint(){printDetails.forEach(([el,open])=>el.open=open);printDetails=[];}
+window.addEventListener('beforeprint',preparePrint);window.addEventListener('afterprint',finishPrint);
