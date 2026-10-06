@@ -13,7 +13,7 @@ class Site(HTMLParser):
   if 'id' in a:self.ids.append(a['id'])
   for key in ['src','href']:
    if key in a:self.links.append(a[key])
-  for key in ['for','aria-controls','aria-labelledby']:
+  for key in ['for','aria-controls','aria-labelledby','aria-describedby']:
    if key in a:self.refs.extend(a[key].split())
 p=Site();p.feed((root/'index.html').read_text())
 assert len(p.ids)==len(set(p.ids)), 'Duplicate element IDs'
