@@ -26,6 +26,16 @@ for css in ['style.css','fonts.css']:
   if url.startswith('./'):assert (root/urllib.parse.urlsplit(url).path).is_file(),f'Missing CSS asset: {url}'
 assert 'fonts.googleapis.com' not in (root/'index.html').read_text(),'External fonts returned'
 assert 'mailto:' not in (root/'app.js').read_text(),'Unverified email recipient returned'
+font_css=(root/'fonts.css').read_text()
+noto_urls=re.findall(r'url\([\'\"]?(\./assets/fonts/noto-tc-subset\.woff2[^\)\'\"]*)',font_css)
+assert len(noto_urls)==1,'Expected one variable CJK font face'
+assert noto_urls[0] in p.links,'CJK preload/font-face version mismatch'
+for font in (root/'assets/fonts').glob('*.woff2'):
+ assert font.read_bytes()[:4]==b'wOF2',f'Invalid WOFF2 header: {font.name}'
+for license_name in ['OFL-NotoSansTC.txt','OFL-BarlowCondensed.txt']:
+ assert (root/'assets/fonts'/license_name).is_file(),f'Missing font license: {license_name}'
+assert '非官方網站' in (root/'index.html').read_text(),'Missing nonofficial disclosure'
+print('PASS: matching CJK preload, valid WOFF2 headers, retained licenses and concept disclosure.')
 print(f'PASS: {len(p.ids)} unique IDs, references, anchor links and local assets.')
 if '--source' in sys.argv:
  class Cells(HTMLParser):
