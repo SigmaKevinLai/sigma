@@ -29,11 +29,18 @@ async (page) => {
   check(await page.locator('#navigation a').first().evaluate(el => el === document.activeElement), 'Menu initial focus');
   await page.keyboard.press('Escape');
   check(await page.locator('.menu-toggle').evaluate(el => el === document.activeElement), 'Mobile menu focus');
-  await page.locator('#inquiry-name').fill('Regression Test');
+  await page.locator('#inquiry-name').fill('   ');
+  await page.locator('#inquiry-email').fill('test@example.com');
+  await page.locator('#inquiry-message').fill('   ');
+  await page.locator('#inquiry-form button[type="submit"]').click();
+  check(!(await page.locator('#draft-preview').isVisible()), 'Whitespace draft rejected');
+  check(await page.locator('#inquiry-name').evaluate(el => el.validity.customError), 'Whitespace custom error');
+  await page.locator('#inquiry-name').fill('  Regression Test  ');
   await page.locator('#inquiry-email').fill('test@example.com');
   await page.locator('#inquiry-message').fill('Local draft test — do not transmit.');
   await page.locator('#inquiry-form button[type="submit"]').click();
   check((await page.locator('#draft-preview').inputValue()).includes('Local draft test'), 'Draft content');
+  check((await page.locator('#draft-preview').inputValue()).includes('姓名：Regression Test\n'), 'Name trimmed');
   check(!page.url().includes('email='), 'Private data in URL');
   await page.locator('#inquiry-email').fill('updated@example.com');
   check(await page.locator('#copy-draft').isDisabled(), 'Stale copy disabled');
@@ -43,5 +50,6 @@ async (page) => {
   await page.locator('#clear-inquiry').click();
   check(await page.locator('#inquiry-name').inputValue() === '', 'Clear name');
   check(!(await page.locator('#draft-actions').isVisible()), 'Clear draft actions');
+  check(!(await page.locator('#inquiry-name').evaluate(el=>el.validity.customError)), 'Clear validation');
   console.log('PASS: widths, five material paths, filter, keyboard tabs, modal, mobile focus and local draft.');
 }
