@@ -13,7 +13,7 @@ from site_data import ADC, EMAIL  # noqa: E402
 
 files = json.loads((root / 'tools/generated.json').read_text())
 pages = [f for f in files if f.endswith('.html')]
-assert len(pages) == 33, f'Expected 32 language pages + 404, got {len(pages)}'
+assert len(pages) == 34, f'Expected 32 language pages + 404 + photo credits, got {len(pages)}'
 
 
 class Page(HTMLParser):
@@ -63,7 +63,7 @@ for rel in pages:
             tp = Page(); tp.feed(target.read_text())
             assert parts.fragment in tp.ids, f'{rel}: broken cross-page fragment {link}'
         checked_links += 1
-    if '/' in rel and not rel.startswith(('zh-hans', 'en', 'ja')) or rel == 'index.html':
+    if ('/' in rel and not rel.startswith(('zh-hans', 'en', 'ja', 'credits'))) or rel == 'index.html':
         assert f'mailto:{EMAIL}' in text, f'{rel}: group email missing'
 
 for css in ['assets/site.css']:

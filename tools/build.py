@@ -12,11 +12,12 @@ import re
 from i18n import LANGS, ROUTES, NAV
 from site_data import EMAIL, HQ_PHONE, ADC, ADC_ELEMENTS, ZINC, ZINC_ELEMENTS, LOCATIONS, HISTORY
 import faq
+from home_refresh import photo, credits
 
 ROOT = Path(__file__).resolve().parent.parent
 ART = ROOT / 'src' / 'art'
 BASE_URL = 'https://ed100084.github.io/sigma/'   # change when the official domain goes live
-VERSION = '20261006-42'
+VERSION = '20261006-43'
 GENERATED = []
 TRANSLATED = {'zh-Hant'}  # languages with full page bodies; others get localized placeholders
 
@@ -109,7 +110,7 @@ def footer(p):
    <a href="tel:{HQ_PHONE.replace('-', '')}">{HQ_PHONE}</a><br><a href="mailto:{EMAIL}">{EMAIL}</a></address></div>
   <nav aria-label="{e(ui['language'])}"><h2>{e(ui['language'])}</h2><ul>{langs}</ul></nav>
  </div>
- <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><a href="#top">{e(ui['top'])} ↑</a></div>
+ <div class="wrap footer-bottom"><span>© <span data-year>2026</span> SIGMA Group. All rights reserved.</span><a href="{p.asset('credits/')}">圖片來源</a><a href="#top">{e(ui['top'])} ↑</a></div>
 </footer>'''
 
 
@@ -141,7 +142,7 @@ def document(p, title, description, body, index=True):
 {font_preload}<link rel="stylesheet" href="{p.asset('assets/site.css')}?v={VERSION}">
 <script src="{p.asset('assets/site.js')}?v={VERSION}" defer></script>
 </head>
-<body class="page-{p.key}">
+<body class="page-{p.key}{" light-home" if p.key == "home" and p.lang == "zh-Hant" else ""}">
 {header(p)}
 <main id="main" tabindex="-1">
 {body}
@@ -194,7 +195,7 @@ def home(p):
         ('products', '#zinc', 'zinc', '04', '鋅合金錠', 'Zamak-3 · Zamak-5 · ZSG-3', '以純鋅錠為原料，依國際標準或客戶需求生產壓鑄用鋅合金錠。'),
     ]
     cards = ''.join(f'''<li><a class="product-tile" href="{p.url(k, anchor=a)}">
- <span class="tile-index">{i}</span><div class="tile-art">{art(img)}</div>
+ <span class="tile-index">{i}</span>
  <h3>{t}</h3><p class="tile-spec">{s}</p><p>{d}</p><span class="tile-more">了解規格 <span aria-hidden="true">→</span></span></a></li>'''
                     for k, a, img, i, t, s, d in products)
     steps = [('回收', '全球採購網路，依 ISRI 規格購入 Tense、Taint/Tabor、Zorba 等廢鋁。'),
@@ -213,7 +214,7 @@ def home(p):
    <div class="actions"><a class="btn btn-molten btn-lg" href="{p.url('products')}">產品與規格 <span aria-hidden="true">→</span></a>
     <a class="btn btn-ghost btn-lg" href="{p.url('contact')}">詢價與合作</a></div>
   </div>
-  <div class="hero-art">{art('hero', 'art-dark')}<p class="hero-caption"><span aria-hidden="true"><small>13</small>Al</span>鋁可無限次循環，<br>再生能耗不到原鋁的 5%</p></div>
+  <div class="hero-art">{photo(p, 'ingots', True)}<p class="hero-caption"><span aria-hidden="true"><small>13</small>Al</span>鋁可無限次循環，<br>再生能耗不到原鋁的 5%</p></div>
  </div>
  <div class="wrap"><dl class="stat-strip">
   <div><dt>創立</dt><dd><b>1978</b></dd></div>
@@ -237,14 +238,14 @@ def home(p):
    <p class="body-lg">鋁具有優越的再生性能，可多次循環而不影響使用性能。再生鋁製程短、排放少，能耗不到原鋁生產的 5%。新格把城市中的廢舊金屬，重新熔鑄為工業所需的高品質材料。</p>
    <a class="text-link" href="{p.url('technology')}">看完整製程與品質管理 <span aria-hidden="true">→</span></a>
   </div>
-  <div class="cycle-figure">{art('cycle')}</div>
+  <div class="cycle-figure">{photo(p, 'recycling')}</div>
  </div>
  <div class="wrap"><ol class="process-steps">{step_html}</ol></div>
 </section>
 
 <section class="section">
  <div class="wrap">
-  {section_head('03', '品質與信譽', '國際市場<br>認可的品質。')}
+  <div class="quality-intro">{section_head('03', '品質與信譽', '國際市場<br>認可的品質。')}{photo(p, 'inspection')}</div>
   <div class="trust-grid">
    <article class="trust-card"><h3>LME 註冊品牌</h3><p class="brands"><b>SBI</b><b>SIGMA</b><b>ZSM</b></p><p>高雄、上海、漳州三大品牌於倫敦金屬交易所註冊；1996 年成為中國第一家在 LME 註冊的再生鋁廠。</p></article>
    <article class="trust-card"><h3>國際體系認證</h3><ul class="tag-list"><li>IATF 16949</li><li>ISO 9001</li><li>ISO 14001</li><li>ISO 45001</li><li>ISO 50001</li><li>ISO 14021</li></ul><p>中國首批循環經濟試點單位，並獲綠色工廠、高新技術企業等榮譽。</p></article>
@@ -261,7 +262,7 @@ def home(p):
    <ul class="place-list">{''.join(f'<li>{e(l["city"])}</li>' for l in LOCATIONS if l['kind'] == 'base')}</ul>
    <a class="btn btn-ghost" href="{p.url('locations')}">查看據點與聯絡方式 <span aria-hidden="true">→</span></a>
   </div>
-  <div class="map-figure">{art('map', 'art-dark')}</div>
+  <div class="network-numbers"><p>LOCAL SUPPLY · GLOBAL REACH</p><strong>9</strong><p>生產基地 · 跨區協作</p><a class="text-link" href="{p.url('locations')}">臺灣・中國大陸・美國・日本 →</a></div>
  </div>
 </section>
 
@@ -718,6 +719,7 @@ def main():
             html = builder(p) if builder else placeholder(p)
             write(p.out + 'index.html', html)
     write('404.html', not_found())
+    write('credits/index.html', credits())
     urls = ''.join(f'<url><loc>{BASE_URL + LANGS[l]["prefix"] + r}</loc></url>' for l in LANGS if l in TRANSLATED for _, r in ROUTES)
     write('sitemap.xml', f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n')
     write('robots.txt', f'User-agent: *\nAllow: /\nSitemap: {BASE_URL}sitemap.xml\n')
