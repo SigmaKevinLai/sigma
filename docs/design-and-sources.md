@@ -11,7 +11,7 @@ Industrial editorial: graphite, molten orange, mineral white, condensed Latin ty
 - http://www.sigmacorp.com/cht/environmental/eco.aspx — aluminum ash resource recovery.
 - http://www.sigmacorp.com/cht/web/contact.aspx — location addresses/phone numbers. Displayed email info@sigmacorp.com differs from original href info@sigmasha.com. This redesign explicitly notes the discrepancy and links to official contacts; email must be confirmed before real use.
 
-All claims are company-reported, not independently audited. No quantitative emissions-reduction claim or certification-validity guarantee has been added. Form is mailto only, never sends/stores data. Site identifies itself as a design demonstration.
+All claims are company-reported, not independently audited. No quantitative emissions-reduction claim or certification-validity guarantee has been added. Form generates a selectable local draft only; no mailto recipient, no transmission/storage. Submit is disabled until JavaScript initialization to prevent GET fallback. Site identifies itself as a design demonstration.
 
 ## Assets
 assets/material.svg and assets/favicon.svg are original vector graphics. CSS product sketches and embedded network SVG are original conceptual graphics. Downloaded factory/production/quality photographs are from original company website and are not presently displayed due to low resolution and unconfirmed rights. Confirm image rights before commercial use. Google Fonts serves Noto Sans TC and Barlow Condensed, with fallback fonts; no dependency is necessary for functionality.
