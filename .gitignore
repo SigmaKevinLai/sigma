@@ -1,3 +1,5 @@
 .playwright-cli/
 node_modules/
 .DS_Store
+# Generated local visual-audit captures (not public site assets)
+docs/*.png

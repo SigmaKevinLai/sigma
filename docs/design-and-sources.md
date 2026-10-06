@@ -14,10 +14,10 @@ Industrial editorial: graphite, molten orange, mineral white, condensed Latin ty
 All claims are company-reported, not independently audited. No quantitative emissions-reduction claim or certification-validity guarantee has been added. Form generates a selectable local draft only; no mailto recipient, no transmission/storage. Submit is disabled until JavaScript initialization to prevent GET fallback. Site identifies itself as a design demonstration.
 
 ## Assets
-assets/material.svg and assets/favicon.svg are original vector graphics. CSS product sketches and embedded network SVG are original conceptual graphics. Downloaded factory/production/quality photographs are from original company website and are not presently displayed due to low resolution and unconfirmed rights. Confirm image rights before commercial use. Google Fonts serves Noto Sans TC and Barlow Condensed, with fallback fonts; no dependency is necessary for functionality.
+assets/material.svg and assets/favicon.svg are original vector graphics. CSS product sketches and embedded network SVG are original conceptual graphics. Downloaded factory/production/quality photographs are from original company website and are not presently displayed due to low resolution and unconfirmed rights. Confirm image rights before commercial use. Noto Sans TC and Barlow Condensed subsets are locally hosted under SIL OFL with system fallback; no runtime Google Fonts connection. License files are retained.
 
 ## Deployment
 GitHub Pages serves main branch repository root, with .nojekyll. Every push to main triggers native Pages publication. No custom server or scheduled CI is required.
 
 ## Next iterations
-Add detailed alloy comparison, complete zinc-alloy category, validated bilingual content, verified certification documents, photography with confirmed rights, and deeper performance/accessibility audits. Competition-level design is a quality target, not a promise of awards.
+Implemented ADC comparison, zinc category, local fonts, application finder, field notes, touch sizing and repeatable interaction/focus checks. Remaining production enhancements include validated bilingual content, verified certification documents, photography with confirmed rights and independent user/screen-reader testing. Competition-level design is a quality target, not a promise of awards.
