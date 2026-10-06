@@ -16,7 +16,9 @@ async (page) => {
  await page.locator('.finder-open').click();await page.keyboard.press('Escape');
  check(await page.locator('.finder-open').evaluate(el=>el===document.activeElement),'Return finder focus');
  await page.locator('[data-product="zinc"]').click();await page.locator('#dialog-inquiry').click();
- await page.waitForTimeout(400);
- check(await page.locator('#inquiry-name').evaluate(el=>el===document.activeElement),'Inquiry transfer focus');
+ check(await page.locator('#inquiry-name').evaluate(el=>el===document.activeElement),'Immediate inquiry transfer focus');
+ await page.keyboard.press('Tab');
+ await page.waitForTimeout(450);
+ check(await page.locator('#inquiry-email').evaluate(el=>el===document.activeElement),'Inquiry focus not stolen after Tab');
  console.log('PASS: navigation, five modal focus cycles, source links, finder return and inquiry transfer.');
 }
