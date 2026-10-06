@@ -32,7 +32,7 @@ async (page) => {
   await page.locator('#inquiry-name').fill('Regression Test');
   await page.locator('#inquiry-email').fill('test@example.com');
   await page.locator('#inquiry-message').fill('Local draft test — do not transmit.');
-  await page.locator('#inquiry-form button').click();
+  await page.locator('#inquiry-form button[type="submit"]').click();
   check((await page.locator('#draft-preview').inputValue()).includes('Local draft test'), 'Draft content');
   check(!page.url().includes('email='), 'Private data in URL');
   console.log('PASS: widths, five material paths, filter, keyboard tabs, modal, mobile focus and local draft.');
