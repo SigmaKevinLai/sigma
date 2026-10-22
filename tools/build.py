@@ -276,8 +276,7 @@ def about(p):
     timeline = ''.join(
         f'<li><h3>{y}</h3><ul>' + ''.join(f'<li><span>{e(m)}</span>{e(t)}</li>' for m, t in events) + '</ul></li>'
         for y, events in HISTORY)
-    plants = [('高雄', '6,000'), ('重慶', '10,000'), ('日照', '10,000'), ('包頭', '10,000'), ('浙江', '10,000'),
-              ('濱州', '8,000'), ('鞏義', '8,000'), ('長春', '6,500'), ('成都', '5,000')]
+    plants = [('高雄', '6,000'), ('浙江', '10,000')]
     plant_rows = ''.join(f'<tr><th scope="row">{a}</th><td>{b}</td></tr>' for a, b in plants)
     return document(p, '關於新格', '新格集團 1978 年創立，主要經營再生鋁合金錠、鋁液直供、鋁合金壓鑄件、鋅合金錠與廢金屬貿易。認識新格的理念、規模、品牌與沿革。', f'''
 {page_hero(p, 'ABOUT SIGMA', '全球再生鋁<br>產業的長期實踐者', '自 1978 年起，新格持續投入資源回收、環境改善與循環利用，以 RECYCLING FOR A BETTER TOMORROW 為經營理念。', 'plant')}
@@ -324,21 +323,9 @@ def about(p):
  </div>
 </section>
 
-<section class="section photo-band">
- {backdrop(p, 'hall')}
- <div class="wrap split">
-  <div>{section_head('04', '產業生態', '重慶新格鋁製<br>汽車零部件產業園')}</div>
-  <div class="prose">
-   <p>永川基地 30 萬噸再生鋁產能已投產，規劃引進 20 家鋁合金壓鑄與機械加工企業，打造百億級鋁製汽車零部件產業基地。</p>
-   <p>園區首創「鋁液直供－壓鑄成型」短流程體系，協助入園企業降本增效。永川區政府提供政策支持，新格負責園區建設、招商與營運；廠房可租可買，企業可「拎包入駐」。</p>
-   <p>2026 年 2 月，全國首個江海聯運進口再生鋁檢驗監管優化試點於永川新格落地，有效降低原料成本，鞏固鋁液保供體系。</p>
-  </div>
- </div>
-</section>
-
 <section class="section">
  <div class="wrap">
-  {section_head('05', '發展沿革', '四十多年，<br>一路熔鑄向前。')}
+  {section_head('04', '發展沿革', '四十多年，<br>一路熔鑄向前。')}
   <ol class="timeline">{timeline}</ol>
  </div>
 </section>
