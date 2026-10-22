@@ -198,7 +198,7 @@ def home(p):
              ('交付', '以合金錠或高溫鋁液交付，回到汽車、家電與工業製造。')]
     step_html = ''.join(f'<li><span class="step-no">0{n + 1}</span><h3>{t}</h3><p>{d}</p></li>' for n, (t, d) in enumerate(steps))
     return document(p, 'SIGMA 新格集團｜再生鋁合金・鋁液直供・鋅合金',
-                    '新格集團 1978 年創立，深耕再生鋁合金、鋁液直供、鋅合金製造與廢金屬貿易，在臺灣與中國大陸設有九大生產基地，年產能逾 120 萬噸。',
+                    '新格集團 1978 年創立，深耕再生鋁合金、鋁液直供、鋅合金製造與廢金屬貿易，在臺灣高雄與浙江嘉善設有兩大生產基地，年產能逾 120 萬噸。',
                     f'''<section class="home-hero photo-hero">
  {backdrop(p, 'melt', eager=True)}
  <div class="wrap hero-grid">
@@ -213,7 +213,7 @@ def home(p):
  </div>
  <div class="wrap"><dl class="stat-strip">
   <div><dt>創立</dt><dd><b>1978</b></dd></div>
-  <div><dt>生產基地</dt><dd><b>9</b><small>座</small></dd></div>
+  <div><dt>生產基地</dt><dd><b>2</b><small>座</small></dd></div>
   <div><dt>集團年產能</dt><dd><b>120</b><small>萬噸+</small></dd></div>
   <div><dt>合金產品規格</dt><dd><b>100</b><small>種+</small></dd></div>
  </dl></div>
@@ -253,8 +253,8 @@ def home(p):
  {backdrop(p, 'hall')}
  <div class="wrap split">
   <div>
-   {section_head('04', '全球據點', '九大生產基地，<br>就近供應。')}
-   <p class="body-lg">總部位於臺灣高雄，在浙江、重慶、山東、四川、內蒙古與河南設立規模化熔煉廠，並於美國、日本設有貿易據點，建構橫跨三大洲的採購與供應網路。</p>
+   {section_head('04', '全球據點', '兩大生產基地，<br>就近供應。')}
+   <p class="body-lg">總部位於臺灣高雄，在浙江嘉善設立規模化熔煉廠，並於美國、日本設有貿易據點，建構橫跨三大洲的採購與供應網路。</p>
    <ul class="place-list">{''.join(f'<li>{e(l["city"])}</li>' for l in LOCATIONS if l['kind'] == 'base')}</ul>
    <a class="btn btn-ghost" href="{p.url('locations')}">查看據點與聯絡方式 <span aria-hidden="true">→</span></a>
   </div>
@@ -285,7 +285,7 @@ def about(p):
   <div>{section_head('01', '集團簡介', '把城市礦山，<br>熔鑄為工業材料。')}</div>
   <div class="prose">
    <p>新格集團創立於 1978 年，主要致力於再生鋁合金、鋅合金的生產及廢金屬貿易。以報廢汽車等廢舊金屬為原料，生產 100 多種規格的鋁合金產品，廣泛供應汽車與機車零部件、家用電器、工業裝備及其他製造業。</p>
-   <p>新格發企業股份有限公司於 1981 年在臺灣高雄成立，為集團金屬貿易總部。集團在高雄、浙江、重慶永川、重慶綦江、日照、成都、包頭、濱州與鞏義設有九大生產基地，並在東莞、漳州、長春設有業務據點，在美國與日本設有貿易辦事處。</p>
+   <p>新格發企業股份有限公司於 1981 年在臺灣高雄成立，為集團金屬貿易總部。集團在高雄、浙江設有兩大生產基地，並在東莞、漳州設有業務據點，在美國與日本設有貿易辦事處。</p>
    <p>新格是全球鋁回收利用體系的重要一環。進口原料依美國 ISRI 標準採購，主要來自北美與歐洲；國內原料則包括回收市場廢鋁、金屬矽、電解鋁錠、純銅與工廠下腳料。</p>
   </div>
  </div>
@@ -598,8 +598,8 @@ def locations(p):
                 f'<p class="loc-name">{e(l["name"])}</p><p class="loc-role">{e(l["role"])}</p><dl>{address}{contact}</dl></li>')
     bases = [l for l in LOCATIONS if l['kind'] == 'base']
     offices = [l for l in LOCATIONS if l['kind'] == 'office']
-    return document(p, '全球據點', '新格集團全球據點：高雄總部與浙江、重慶、日照、成都、包頭、濱州、鞏義等九大生產基地，以及長春、漳州、東莞、美國、日本業務據點的地址與電話。', f'''
-{page_hero(p, 'GLOBAL NETWORK', '全球據點', '九大生產基地就近供應鋁合金錠與鋁液，業務與貿易據點橫跨臺灣、中國大陸、美國與日本。', 'hall')}
+    return document(p, '全球據點', '新格集團全球據點：高雄總部與浙江兩大生產基地，以及漳州、東莞、美國、日本業務據點的地址與電話。', f'''
+{page_hero(p, 'GLOBAL NETWORK', '全球據點', '兩大生產基地就近供應鋁合金錠與鋁液，業務與貿易據點橫跨臺灣、中國大陸、美國與日本。', 'hall')}
 <section class="section">
  <div class="wrap">
   <div class="filter-bar" data-loc-filter hidden role="group" aria-label="篩選據點">
@@ -652,7 +652,7 @@ def contact(p):
      <div><dt>電話</dt><dd><a href="tel:{HQ_PHONE.replace('-', '')}">{HQ_PHONE}</a></dd></div>
      <div><dt>傳真</dt><dd>+886-7-803-2211</dd></div>
      <div><dt>地址</dt><dd>臺灣高雄市小港區台機路 24 號（81246）</dd></div></dl></div>
-   <div class="contact-card"><h2>各地據點</h2><p>九大生產基地與海外貿易據點的地址與電話。</p><a class="text-link" href="{p.url('locations')}">查看全球據點 <span aria-hidden="true">→</span></a></div>
+   <div class="contact-card"><h2>各地據點</h2><p>兩大生產基地與海外貿易據點的地址與電話。</p><a class="text-link" href="{p.url('locations')}">查看全球據點 <span aria-hidden="true">→</span></a></div>
    <div class="contact-card"><h2>技術問題</h2><p>先查看常見鑄造問題與參數對照表。</p><a class="text-link" href="{p.url('support')}">前往技術支援 <span aria-hidden="true">→</span></a></div>
   </div>
  </div>
